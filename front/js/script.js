@@ -1,22 +1,27 @@
-fetch("http://localhost:3000/api/products")// je recupère la liste de mes articles
-.then(data => data.json())
-.then(jsonListArticle => {
-//  console.log(jsonListArticle)
-for(let jsonArticle of jsonListArticle){
-    let article = new Article(jsonArticle);
-    document.getElementById("items").innerHTML += //j'injecte les articles dans la page
-    `<a href="./product.html?id=42">
-        <article>
-            <img src="${article.imageUrl}" alt="${article.altTxt}">
-            <h3 class="productName">${article.name}</h3>
-            <p class="productDescription">${article.description}</p> 
-        </article>
-    </a> `
-}
-});
-// Je crée une class article pour définir article par article dans la list json
- class Article{
-   constructor(jsonArticle){
-             jsonArticle && Object.assign(this, jsonArticle);
-     }
+ async function main(){
+     const articles = await getArticles()
+     console.log(articles)
+     displayArticles(articles)
  }
+
+ function getArticles(){
+    return fetch("http://localhost:3000/api/products")
+    .then(function(httpListArticles){
+        // console.log(httpListArticles.json())
+        return httpListArticles.json()
+    })
+    .then(function(articles){
+        console.log(articles)
+        return articles
+    })
+    .catch(function(error){
+        alert(error)
+    })
+ }
+// 
+ function displayArticles(articles){
+    for(let article of articles){
+        console.log(article);
+    }
+ }
+ main()
