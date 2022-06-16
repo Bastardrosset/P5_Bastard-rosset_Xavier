@@ -1,7 +1,7 @@
 fetch("http://localhost:3000/api/products")// appel a l'API 
   .then(response => response.json())// reponse transforme en format lisible
   .then((data) => {
-      console.log(data)
+    //   console.log(data)
       return addProducts(data);// reponse passe le resultat a fonction addProduct
           
         }
