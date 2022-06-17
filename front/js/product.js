@@ -20,7 +20,7 @@ function detailsArticle(kanap){
     // const name = kanap.name;
     // const price = kanap.price;
     // const _id = kanap._id;
-    const{altTxt, colors, description, imageUrl, name, price, _id} = kanap // attribut une constante a chaque item de l'article
+    const{altTxt, colors, description, imageUrl, name, price, _id} = kanap // recupere les items de l'appel fetch et attribut une constante a chaque item de l'article
     itemPrice = price;
     attachImage(imageUrl, altTxt);
     attachTitle(name);
@@ -82,9 +82,9 @@ function attachColors(colors){
         button.addEventListener('click', (e)=>{// au click de button
             const color = document.querySelector('#colors').value
             const quantity = document.querySelector('#quantity').value
-                if(color == null || quantity == null || color === '' || quantity === ''){
+                 if(color == null || quantity == null || color === '' || quantity == 0){
                     alert("Veuillez choisir une couleur et une quantitée !")// si les choix n'ont pas de valeur, message alert s'execute
-                    return
+                    return 
                 }
 
             const data ={// objet auquel on attribut les valeurs a enregistrer
