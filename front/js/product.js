@@ -81,22 +81,23 @@ function attachColors(colors){
 // Fonction localStorage && selection couleur quantitées //
 
 var button = document.querySelector('#addToCart');// attribut une variable button a l'élément button
-
     if(button != null){
-        button.addEventListener('click', buttonClick());
-     }
-
-function buttonClick(){
-    const color = document.querySelector('#colors').value
-    const quantity = document.querySelector('#quantity').value
-                 
-        if (validationCondition(color, quantity)) return;// fonction conditionValidation si une des condition n'est pas remplis le script s'arrete 
-        dataLocalStorage(color, quantity);
-        redirectToCart();
+        button.addEventListener('click', (e)=>{// au click de button
+            addToCart();
+     })   
 }
 
-function dataLocalStorage(color, quantity){
-    const data ={// objet auquel on attribut les valeurs a enregistrer dans localStorage et aussi les communiquer a la page cart.js
+function addToCart(){
+    const color = document.querySelector('#colors').value
+    const quantity = document.querySelector('#quantity').value
+            
+    if (choiceSelection(color, quantity)) return; 
+    saveCart(color, quantity);
+    redirectCart();
+}
+
+function saveCart(color, quantity){
+    const data ={// objet auquel on attribut les valeurs a enregistrer afin de les communiquer a la page cart.js
         articleId : articleId,
         color : color,
         quantity : Number(quantity),
@@ -104,16 +105,16 @@ function dataLocalStorage(color, quantity){
         imgUrl : imgUrl,
         altText : altText
     }
-    localStorage.setItem(articleId, JSON.stringify(data))// store les valeurs enregistrés dans l'objet data et les sérialises en format json 
+    localStorage.setItem(articleId, JSON.stringify(data));// store les valeurs enregistrés dans l'objet data et les sérialises en format json 
 }
 
-function validationCondition(color, quantity){
+function choiceSelection(color, quantity){
     if(color == null || quantity == null || color === '' || quantity == 0){
         alert("Veuillez choisir une couleur et une quantitée !")// si les choix n'ont pas de valeur, message alert s'execute
-        return true// retourne vrai si les conditions sont remplis
+        return true;// empeche d'aller plus loin si les conditions non remplis
     }
 }
 
-function redirectToCart(){
+function redirectCart(){// redirige vers la page panier
     window.location.href = "cart.html";
 }
