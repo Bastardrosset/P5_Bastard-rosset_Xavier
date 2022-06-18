@@ -2,8 +2,9 @@ const url_string = window.location.search;
 const url = new URLSearchParams(url_string);
 const articleId = url.get('id');
 
-if (articleId == null){// recupere le prix de l'article et le transmet a localStorage
+if (articleId == null){// recupere le prix & image de l'article le transmet a localStorage
     var itemPrice = 0;
+    var imgUrl, altText;
 }
 // console.log({articleId});
  
@@ -22,6 +23,8 @@ function detailsArticle(kanap){
     // const _id = kanap._id;
     const{altTxt, colors, description, imageUrl, name, price, _id} = kanap // recupere les items de l'appel fetch et attribut une constante a chaque item de l'article
     itemPrice = price;
+    imgUrl = imageUrl;
+    altText = altTxt;
     attachImage(imageUrl, altTxt);
     attachTitle(name);
     attachPrice(price);
@@ -75,26 +78,42 @@ function attachColors(colors){
      }
     }
 
+// Fonction localStorage && selection couleur quantitées //
 
-    var button = document.querySelector('#addToCart');// attribut une variable button a l'élément button
+var button = document.querySelector('#addToCart');// attribut une variable button a l'élément button
 
     if(button != null){
-        button.addEventListener('click', (e)=>{// au click de button
-            const color = document.querySelector('#colors').value
-            const quantity = document.querySelector('#quantity').value
-                 if(color == null || quantity == null || color === '' || quantity == 0){
-                    alert("Veuillez choisir une couleur et une quantitée !")// si les choix n'ont pas de valeur, message alert s'execute
-                    return 
-                }
+        button.addEventListener('click', buttonClick());
+     }
 
-            const data ={// objet auquel on attribut les valeurs a enregistrer
-                articleId : articleId,
-                color : color,
-                quantity : Number(quantity),
-                price : itemPrice
-            }
-            localStorage.setItem(articleId, JSON.stringify(data))// store les valeurs enregistrés dans l'objet data et les sérialises en format json 
-            window.location.href = "cart.html";
-    })
+function buttonClick(){
+    const color = document.querySelector('#colors').value
+    const quantity = document.querySelector('#quantity').value
+                 
+        if (validationCondition(color, quantity)) return;// fonction conditionValidation si une des condition n'est pas remplis le script s'arrete 
+        dataLocalStorage(color, quantity);
+        redirectToCart();
 }
 
+function dataLocalStorage(color, quantity){
+    const data ={// objet auquel on attribut les valeurs a enregistrer dans localStorage et aussi les communiquer a la page cart.js
+        articleId : articleId,
+        color : color,
+        quantity : Number(quantity),
+        price : itemPrice,
+        imgUrl : imgUrl,
+        altText : altText
+    }
+    localStorage.setItem(articleId, JSON.stringify(data))// store les valeurs enregistrés dans l'objet data et les sérialises en format json 
+}
+
+function validationCondition(color, quantity){
+    if(color == null || quantity == null || color === '' || quantity == 0){
+        alert("Veuillez choisir une couleur et une quantitée !")// si les choix n'ont pas de valeur, message alert s'execute
+        return true// retourne vrai si les conditions sont remplis
+    }
+}
+
+function redirectToCart(){
+    window.location.href = "cart.html";
+}
