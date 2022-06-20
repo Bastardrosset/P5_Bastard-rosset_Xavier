@@ -2,9 +2,9 @@ const url_string = window.location.search;
 const url = new URLSearchParams(url_string);
 const articleId = url.get('id');
 
-if (articleId == null){// recupere le prix & image de l'article le transmet a localStorage
+if (articleId == null){// recupere le prix & image de l'article & le transmet a localStorage
     var itemPrice = 0;
-    var imgUrl, altText;
+    var imgUrl, altText, h2Cart;
 }
 // console.log({articleId});
  
@@ -21,10 +21,11 @@ function detailsArticle(kanap){
     // const name = kanap.name;
     // const price = kanap.price;
     // const _id = kanap._id;
-    const{altTxt, colors, description, imageUrl, name, price, _id} = kanap // recupere les items de l'appel fetch et attribut une constante a chaque item de l'article
+    const{altTxt, colors, description, imageUrl, name, price} = kanap // recupere les items de l'appel fetch et attribut une constante a chaque item de l'article
     itemPrice = price;
     imgUrl = imageUrl;
     altText = altTxt;
+    h2Cart = name;
     attachImage(imageUrl, altTxt);
     attachTitle(name);
     attachPrice(price);
@@ -82,10 +83,8 @@ function attachColors(colors){
 
 var button = document.querySelector('#addToCart');// attribut une variable button a l'élément button
     if(button != null){
-        button.addEventListener('click', (e)=>{// au click de button
-            addToCart();
-     })   
-}
+        button.addEventListener('click', addToCart)// au click de button
+    }
 
 function addToCart(){
     const color = document.querySelector('#colors').value
@@ -97,15 +96,19 @@ function addToCart(){
 }
 
 function saveCart(color, quantity){
-    const data ={// objet auquel on attribut les valeurs a enregistrer afin de les communiquer a la page cart.js
+    const data = {// objet auquel on attribut les valeurs a enregistrer afin de les communiquer a la page cart.js
         articleId : articleId,
         color : color,
         quantity : Number(quantity),
         price : itemPrice,
         imgUrl : imgUrl,
-        altText : altText
+        altText : altText,
+        name : h2Cart
     }
-    localStorage.setItem(articleId, JSON.stringify(data));// store les valeurs enregistrés dans l'objet data et les sérialises en format json 
+     localStorage.setItem(articleId, JSON.stringify(data));// store les valeurs enregistrés dans l'objet data et les sérialises en format json 
+    //  JSON.stringify(articleId, data);
+    // localStorage.setItem( data);
+    console.log(data);
 }
 
 function choiceSelection(color, quantity){
