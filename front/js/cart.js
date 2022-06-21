@@ -26,75 +26,105 @@ function localStorageArticle(){
 // quantity: 1
 
 
-// bloc article qui contient l'ensemble des items du produit dans le panier
+// bloc article qui contient l'ensemble des items du produit dans le panier 
 function contentArticle(item) {
-    const section = document.querySelector('#cart__items');
+    const blocArticle = buildArticle(item);
+    contentSection(blocArticle);
+    const divImage = buildImage(item);
+    blocArticle.appendChild(divImage);
+    const blocDivDescription = buildDescription(item);
+    blocArticle.appendChild(blocDivDescription);
+}
+// bloc section du document
+function contentSection(blocArticle){
+    const section = document.querySelector('#cart__items').appendChild(blocArticle);
+
+}
+// Bloc article du document
+function buildArticle(item){
     const blocArticle = document.createElement('article');
 
     blocArticle.classList.add('cart__item');
     blocArticle.dataset.id = item.articleId;
     blocArticle.dataset.color = item.color;
 
-    section.appendChild(blocArticle);
-
     return blocArticle;
 }
-
 // image du produit dans le panier
-// function buildImage(article){
-//     const divImage = document.createElement('div');
-//     const image = document.createElement('img');
+function buildImage(item){
+    const divImage = document.createElement('div');
+    const image = document.createElement('img');
 
-//     divImage.classList.add('cart__item__img')
+    divImage.classList.add('cart__item__img');
 
-//     image.src = article.imageUrl;
-//     image.alt = article.altTxt;
+    image.src = item.imgUrl;
+    image.alt = item.altText;
 
-//     divImage.appendChild(image);
-// }
+    divImage.appendChild(image)
 
-// // description du produit dans le panier
-// function buildDescription(article){
-//     const blocDivDescription = document.createElement('div');
-//     blocDivDescription.classList.add('cart__item__content');
-//     const divDescription = document.createElement ('div');
-//     divDescription.classList.add('cart__item__content__description');
-//     const title = document.createElement ('h2');
-//     const colorChoice = document.createElement ('p');
-//     const price = document.createElement ('p');
+    return divImage;
+}
 
+// description du produit dans le panier regroupe fonctions buildItemDescription && buildBlocQuantity
+function buildDescription(item){
+    const blocDivDescription = document.createElement('div');
+    blocDivDescription.classList.add('cart__item__content');
 
-//     title.textContent = item.name;
-//     colorChoice.textContent = item.color;
-//     price.textContent = item.price + "€";
+    const divDescription = buildItemDescription(item);
 
-//     divDescription.appendChild(title);
-//     divDescription.appendChild(colorChoice);
-//     divDescription.appendChild(price);
+    const blocSetting = buildBlocQuantity(item);
+    
+    blocDivDescription.appendChild(divDescription);
+    blocDivDescription.appendChild(blocSetting);
+    
 
-//     document.querySelector('.cart__item__content').appendChild(divDescription);
+    return blocDivDescription;
+}
 
-//     return blocDivDescription;
-// }
+//descriptif nom, couleur et prix de l'article dans le panier
+function buildItemDescription(item){
+    const divDescription = document.createElement ('div');
+    const title = document.createElement ('h2');
+    const colorChoice = document.createElement ('p');
+    const price = document.createElement ('p');
 
-// // quantite d'article dans le panier
-// function buildBlocQuantity(){
-//     const blocSettingQuantity = document.createElement('div');
-//     const blocQuantity = document.createElement('div');
-//     const blocQuantityp = document.createElement('p');
-//     const inputQuantite = document.createElement('input') 
+    divDescription.classList.add('cart__item__content__description');
 
-//     blocSettingQuantity.classList.add('cart__item__content__settings');
-//     blocQuantity.classList.add('cart__item__content__settings__quantity');
-//     inputQuantite.classLisr.add('itemQuantity');
+    title.textContent = item.name;
+    colorChoice.textContent = item.color;
+    price.textContent = item.price + "€";
 
+    divDescription.appendChild(title);
+    divDescription.appendChild(colorChoice);
+    divDescription.appendChild(price);
 
-//     blocSettingQuantity.appendChild(blocQuantity);
-//     blocQuantity.appendChild(blocQuantityp);
-//     blocQuantity.appendChild(inputQuantite) ;
+    return divDescription;
+}
 
-    // return blocSettingQuantity;
-// }
+// quantite d'article & input du panier
+function buildBlocQuantity(item){
+    const blocSetting = document.createElement('div');
+    const divQuantity = document.createElement('div');
+    const p = document.createElement('p');
+    const inputQuantite = document.createElement('input') 
+
+    blocSetting.classList.add('cart__item__content__settings');
+    divQuantity.classList.add('cart__item__content__settings__quantity');
+    inputQuantite.classList.add('itemQuantity');
+    inputQuantite.type = "number";
+    inputQuantite.name = "itemQuantity";
+    inputQuantite.min = "1";
+    inputQuantite.max = "100";
+    inputQuantite.value = item.quantity;
+
+    p.textContent =`Qté : `;
+
+    blocSetting.appendChild(divQuantity);
+    divQuantity.appendChild(p);
+    divQuantity.appendChild(inputQuantite) ;
+
+    return blocSetting;
+}
 
 
 // function buildDeleteItem(){
