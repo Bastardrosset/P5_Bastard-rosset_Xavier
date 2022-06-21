@@ -1,4 +1,16 @@
-// const cart = [];
+const nmbArticle = localStorage.length;
+console.log("vous avez ajouter : ", nmbArticle);
+for(let i = 0; i < nmbArticle; i++){
+    const article = localStorage.getItem(localStorage.key(i));
+    // console.log("objet a la position ", i, `est l'`, article)
+    const articleArray =  [];
+    const articleObjet = JSON.parse(article);
+
+    articleArray.push(articleObjet);
+    console.log(articleObjet);
+}
+
+
 
 // localStorageArticle();
 // cart.forEach((item) => (contentArticle (item)));
@@ -9,8 +21,8 @@
 //     for (let i = 0; i < nombreDarticle.length; i++){
           
 //         const item = localStorage.getItem(localStorage.key(i))
-//         const itemObject = JSON.parse(item)// désérialise le format json pour en faire un objet 
-//         // JSON.parse(localstorage.getItem(cart));
+//         const itemObject = JSON.parse(item)// désérialise (linéarlise) le format json pour en faire un objet 
+//         //  JSON.parse(localstorage.getItem(cart));
 
 //         cart.push(itemObject)
 //     }
@@ -26,28 +38,29 @@
 // price: 4499
 // quantity: 1
 
- function contentArticle(){
+//  function contentArticle(){
 
-    const article = buildArticle(item);
-    const image = blocImage(item);
-    const description = blocDescription(item);
+//     const article = buildArticle(item);
+//     const image = blocImage(item);
+//     const description = blocDescription(item);
 
-    article.appendChild(image)
-    article.appendChild(description);
+//     article.appendChild(image)
+//     article.appendChild(description);
 
-console.log(article);
- }
+// console.log(article);
+//  }
 
  // bloc article qui contient l'ensemble des items du produit dans le panier
-function buildArticle() {
-    const article = document.createElement('article');
-    article.classList.add('cart__item');
-    article.dataset.articleId = item.articleId;
-    article.dataset.color = item.color;
-    document.querySelector('#cart__items').appendChild(article);
+// function buildArticle() {
+    // const article = document.createElement('article');
+    // article.classList.add('cart__item');
+    // article.dataset.articleId = item.articleId;
+    // article.dataset.color = item.color;
+    // document.querySelector('#cart__items').appendChild(article);
 
-    return article;
-}
+//     return article;
+
+// }
 
 // // image du produit dans le panier
 // function blocImage(item){
@@ -90,13 +103,20 @@ function buildArticle() {
 // // quantite d'article dans le panier
 // function blocQuantity(){
 //     const blocSettingQuantity = document.createElement('div');
-//     blocSettingQuantity.classList.add('cart__item__content__settings');
 //     const blocQuantity = document.createElement('div');
-//     blocQuantity.classList.add('cart__item__content__settings__quantity');
 //     const blocQuantityp = document.createElement('p');
+//     const inputQuantite = document.createElement('input') 
+
+//     blocSettingQuantity.classList.add('cart__item__content__settings');
+//     blocQuantity.classList.add('cart__item__content__settings__quantity');
+//     inputQuantite.classLisr.add('itemQuantity');
+
 
 //     blocSettingQuantity.appendChild(blocQuantity);
 //     blocQuantity.appendChild(blocQuantityp);
+//     blocQuantity.appendChild(inputQuantite) ;
+
+    // return blocSettingQuantity;
 // }
 
 
@@ -108,4 +128,6 @@ function buildArticle() {
 //     deleteItem.classList.add ('deleteItem')
     
 //     document.querySelector('.cart__item__content__settings').appendChild(divdeleteItem);
+
+// return divdeleteItem;
 // }

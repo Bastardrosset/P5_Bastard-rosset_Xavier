@@ -82,9 +82,9 @@ function attachColors(colors){
 // Fonction localStorage && selection couleur quantitées //
 
 var button = document.querySelector('#addToCart');// attribut une variable button a l'élément button
-    if(button != null){
-        button.addEventListener('click', addToCart)// au click de button
-    }
+if(button != null){
+    button.addEventListener('click', addToCart)// au click de button
+}
 
 function addToCart(){
     const color = document.querySelector('#colors').value
@@ -108,7 +108,6 @@ function saveCart(color, quantity){
      localStorage.setItem(articleId, JSON.stringify(data));// store les valeurs enregistrés dans l'objet data et les sérialises en format json 
     //  JSON.stringify(articleId, data);
     // localStorage.setItem( data);
-    console.log(data);
 }
 
 function choiceSelection(color, quantity){
