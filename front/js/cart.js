@@ -1,34 +1,20 @@
-const nmbArticle = localStorage.length;
-console.log("vous avez ajouter : ", nmbArticle);
-for(let i = 0; i < nmbArticle; i++){
-    const article = localStorage.getItem(localStorage.key(i));
-    // console.log("objet a la position ", i, `est l'`, article)
-    const articleArray =  [];
-    const articleObjet = JSON.parse(article);
+// console.log("vous avez ajouter : ", nmbArticle);
+localStorageArticle();
 
-    articleArray.push(articleObjet);
-    console.log(articleObjet);
-}
+function localStorageArticle(){
+    const nmbArticle = localStorage.length;
 
+    for(let i = 0; i < nmbArticle; i++){
+        const article = localStorage.getItem(localStorage.key(i));
+        // console.log("objet a la position ", i, `est l'`, article)
+        const articleArray =  [];
+        const articleObjet = JSON.parse(article);
+    
+        articleArray.push(articleObjet);
+        // console.log(articleArray);
+    }
+   }
 
-
-// localStorageArticle();
-// cart.forEach((item) => (contentArticle (item)));
-
-//    function localStorageArticle(){
-//     const nombreDarticle = localStorage.length;// récupere ce que contient localStorage
-// //    console.log(nombreDarticle);
-//     for (let i = 0; i < nombreDarticle.length; i++){
-          
-//         const item = localStorage.getItem(localStorage.key(i))
-//         const itemObject = JSON.parse(item)// désérialise (linéarlise) le format json pour en faire un objet 
-//         //  JSON.parse(localstorage.getItem(cart));
-
-//         cart.push(itemObject)
-//     }
-//    }
-
-//  console.log(cart);
 
 //ITEMS
 // altText: "Photo d'un canapé jaune et noir, quattre places"
