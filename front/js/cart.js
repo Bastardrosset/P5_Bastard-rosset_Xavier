@@ -1,21 +1,22 @@
-// console.log("vous avez ajouter : ", nmbArticle);
+
+const articleArray =  [];
 localStorageArticle();
+articleArray.forEach((item) => contentArticle(item));
 
 function localStorageArticle(){
     const nmbArticle = localStorage.length;
-
+    // console.log("vous avez ajouter : ", nmbArticle);
     for(let i = 0; i < nmbArticle; i++){
         const article = localStorage.getItem(localStorage.key(i));
         // console.log("objet a la position ", i, `est l'`, article)
-        const articleArray =  [];
-        const articleObjet = JSON.parse(article);
+         const articleObjet = JSON.parse(article);
     
         articleArray.push(articleObjet);
-        // console.log(articleArray);
+        console.log(articleArray);
     }
    }
-
-
+   
+  
 //ITEMS
 // altText: "Photo d'un canapé jaune et noir, quattre places"
 // articleId: "415b7cacb65d43b2b5c1ff70f3393ad1"
@@ -24,46 +25,36 @@ function localStorageArticle(){
 // price: 4499
 // quantity: 1
 
-//  function contentArticle(){
 
-//     const article = buildArticle(item);
-//     const image = blocImage(item);
-//     const description = blocDescription(item);
+// bloc article qui contient l'ensemble des items du produit dans le panier
+function contentArticle(item) {
+    const section = document.querySelector('#cart__items');
+    const blocArticle = document.createElement('article');
 
-//     article.appendChild(image)
-//     article.appendChild(description);
+    blocArticle.classList.add('cart__item');
+    blocArticle.dataset.id = item.articleId;
+    blocArticle.dataset.color = item.color;
 
-// console.log(article);
-//  }
+    section.appendChild(blocArticle);
 
- // bloc article qui contient l'ensemble des items du produit dans le panier
-// function buildArticle() {
-    // const article = document.createElement('article');
-    // article.classList.add('cart__item');
-    // article.dataset.articleId = item.articleId;
-    // article.dataset.color = item.color;
-    // document.querySelector('#cart__items').appendChild(article);
+    return blocArticle;
+}
 
-//     return article;
-
-// }
-
-// // image du produit dans le panier
-// function blocImage(item){
+// image du produit dans le panier
+// function buildImage(article){
 //     const divImage = document.createElement('div');
-//     divImage.classList.add('cart__item__img')
 //     const image = document.createElement('img');
-//     image.src = item.imageUrl;
-//     image.alt = item.altTxt;
+
+//     divImage.classList.add('cart__item__img')
+
+//     image.src = article.imageUrl;
+//     image.alt = article.altTxt;
+
 //     divImage.appendChild(image);
-
-    
-
-//     return divImage;
 // }
 
 // // description du produit dans le panier
-// function blocDescription(item){
+// function buildDescription(article){
 //     const blocDivDescription = document.createElement('div');
 //     blocDivDescription.classList.add('cart__item__content');
 //     const divDescription = document.createElement ('div');
@@ -87,7 +78,7 @@ function localStorageArticle(){
 // }
 
 // // quantite d'article dans le panier
-// function blocQuantity(){
+// function buildBlocQuantity(){
 //     const blocSettingQuantity = document.createElement('div');
 //     const blocQuantity = document.createElement('div');
 //     const blocQuantityp = document.createElement('p');
@@ -106,7 +97,7 @@ function localStorageArticle(){
 // }
 
 
-// function deleteItem(){
+// function buildDeleteItem(){
 //     const divdeleteItem = document.createElement ('div');
 //     const deleteItem = document.createElement ('p');
     
