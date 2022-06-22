@@ -12,12 +12,12 @@ function localStorageArticle(){
          const articleObjet = JSON.parse(article);
     
         articleArray.push(articleObjet);
-        console.log(articleArray);
+        // console.log(articleArray);
     }
    }
    
   
-//ITEMS
+//ITEM
 // altText: "Photo d'un canapé jaune et noir, quattre places"
 // articleId: "415b7cacb65d43b2b5c1ff70f3393ad1"
 // color: "Black/Yellow"
@@ -34,6 +34,8 @@ function contentArticle(item) {
     blocArticle.appendChild(divImage);
     const blocDivDescription = buildDescription(item);
     blocArticle.appendChild(blocDivDescription);
+    displayTotalQuantity(item);
+    displayTotalPrice(item);
 }
 // bloc section du document
 function contentSection(blocArticle){
@@ -118,6 +120,7 @@ function buildBlocQuantity(item){
     inputQuantite.min = "1";
     inputQuantite.max = "100";
     inputQuantite.value = item.quantity;
+    inputQuantite.addEventListener('input', () => updatePriceAndQuantity(item.articleId, inputQuantite.value));
 
     p.textContent =`Qté : `;
 
@@ -139,4 +142,31 @@ function buildDeleteItem(item){
     divdeleteItem.appendChild(p)
 
 return divdeleteItem;
+}
+
+// fonction de calcul du nombre d'article total dans le panier
+function displayTotalQuantity(item){
+    const totalQuantity = document.querySelector('#totalQuantity');
+    const totalItemQuantity = articleArray.reduce((total, item) => total + item.quantity, 0);// methode reduce() renvoie la valeur cumulé dans array localStorage
+    
+    totalQuantity.textContent = totalItemQuantity;
+}
+// fonction de calcul de prix total dans le panier
+function displayTotalPrice(item){
+    const totalPrice = document.querySelector('#totalPrice');
+    let total = 0;
+    articleArray.forEach(item =>{
+        const totalItem = item.price * item.quantity;
+        total += totalItem;
+    })
+    // console.log(total);
+    totalPrice.textContent = total;
+}
+// function changement on click quantité dans le panier
+function updatePriceAndQuantity(articleId, newQuantitevalue){//retourne une nouvelle quantité en passant par array localStorage
+    const newTotalQuantity = articleArray.find((item) => item.articleId === articleId);// methode find() renvoie la valeur du premier élément
+    newTotalQuantity.quantity = Number(newQuantitevalue);
+
+    displayTotalQuantity();
+    displayTotalPrice();
 }
