@@ -77,7 +77,9 @@ function buildDescription(item){
     blocDivDescription.appendChild(divDescription);
     blocDivDescription.appendChild(blocSetting);
     
+    const divdeleteItem = buildDeleteItem(item);
 
+    blocSetting.appendChild(divdeleteItem);
     return blocDivDescription;
 }
 
@@ -127,14 +129,14 @@ function buildBlocQuantity(item){
 }
 
 
-// function buildDeleteItem(){
-//     const divdeleteItem = document.createElement ('div');
-//     const deleteItem = document.createElement ('p');
+function buildDeleteItem(item){
+    const divdeleteItem = document.createElement ('div');
+    const p = document.createElement ('p');
     
-//     divdeleteItem.classList.add ('cart__item__content__settings__delete');
-//     deleteItem.classList.add ('deleteItem')
-    
-//     document.querySelector('.cart__item__content__settings').appendChild(divdeleteItem);
+    divdeleteItem.classList.add ('cart__item__content__settings__delete');
+    p.classList.add ('deleteItem')
+    p.textContent = "supprimer"
+    divdeleteItem.appendChild(p)
 
-// return divdeleteItem;
-// }
+return divdeleteItem;
+}
