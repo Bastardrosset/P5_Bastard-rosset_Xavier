@@ -96,6 +96,7 @@ function addToCart(){
 }
 
 function saveCart(color, quantity){
+    const key = `${articleId}-${color}`;
     const data = {// objet auquel on attribut les valeurs a enregistrer afin de les communiquer a la page cart.js
         articleId : articleId,
         color : color,
@@ -105,7 +106,7 @@ function saveCart(color, quantity){
         altText : altText,
         name : h2Cart
     }
-     localStorage.setItem(articleId, JSON.stringify(data));// store les valeurs enregistrés dans l'objet data et les sérialises en format json 
+     localStorage.setItem(key, JSON.stringify(data));// store les valeurs enregistrés dans l'objet data et les sérialises en format json 
     //  JSON.stringify(articleId, data);
     // localStorage.setItem( data);
 }

@@ -120,7 +120,7 @@ function buildBlocQuantity(item){
     inputQuantite.min = "1";
     inputQuantite.max = "100";
     inputQuantite.value = item.quantity;
-    inputQuantite.addEventListener('input', () => updatePriceAndQuantity(item.articleId, inputQuantite.value));
+    inputQuantite.addEventListener('input', () => updatePriceAndQuantity(item.articleId, inputQuantite.value,item));
 
     p.textContent =`Qté : `;
 
@@ -163,10 +163,20 @@ function displayTotalPrice(item){
     totalPrice.textContent = total;
 }
 // function changement on click quantité dans le panier
-function updatePriceAndQuantity(articleId, newQuantitevalue){//retourne une nouvelle quantité en passant par array localStorage
+function updatePriceAndQuantity(articleId, newQuantitevalue, item){//retourne une nouvelle quantité en passant par array localStorage
     const newTotalQuantity = articleArray.find((item) => item.articleId === articleId);// methode find() renvoie la valeur du premier élément
     newTotalQuantity.quantity = Number(newQuantitevalue);
+    item.quantity = newTotalQuantity.quantity;
 
     displayTotalQuantity();
     displayTotalPrice();
+    saveNewDataLocalStorage(item);
+}
+
+// fonction enregistre les nouvelles quantitées quand EventListener 'click' execute la fonction updatePriceAndQuantity(item.articleId, inputQuantite.value))
+function saveNewDataLocalStorage(item){
+    const newData = JSON.stringify(item)
+    const key = `${item.articleId}-${item.color}`;
+    localStorage.setItem(key, newData);
+    console.log('newData', newData);
 }
