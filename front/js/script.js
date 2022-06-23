@@ -14,7 +14,7 @@ function addProducts(data){// recupere les données de fetch
     // const name = data[0].name;// recupere le nom de l'article
     // const description = data[0].description;// recupere la description de l'article
 
-    data.forEach((kanap) =>{//refactorise les constantes en une seul et boucle sur KANAP
+    data.forEach((kanap) =>{
     const {_id, imageUrl, altTxt, name, description} = kanap
 
     const image = buildImage(imageUrl, altTxt);// appel la fonction buildImage
@@ -72,42 +72,4 @@ function txtArticle(description){// creation du descriptif de l'article
 
 
 
-//  function getArticles(){
-//     return fetch("http://localhost:3000/api/products")
-//     .then(function(httpListArticles){
-//         return httpListArticles.json()
-//     })
-//     .then(function(articles){
-//         return articles
-//     })
-//     .catch(function(error){
-//         alert(error)
-//     })
-//  }
-// Affichage des articles page d'accueil //
 
-//  function displayArticles(articles){
-//     const anchor = document.createElement('a');
-//     const items = document.querySelector('#items');
-//     const contentArticle = document.createElement('article');
-//     const imgArticle = document.createElement('img');
-//     const titleArticle = document.createElement('h3');
-//     const descArticle = document.createElement('p');
-        
-//     anchor.href += `./product.html?=${article._id}`;
-//     imgArticle.src = `${article.imageUrl}`;
-//     imgArticle.alt = `${article.altTxt}`;
-//     titleArticle.textContent = `${articles.name}`;
-//     titleArticle.classList.add('productName');
-//     descArticle.textContent =`${articles.description}`;
-//     descArticle.classList.add('productDescription');
-
-//     anchor.appendChild(contentArticle);
-//     contentArticle.appendChild(imgArticle);
-//     contentArticle.appendChild(titleArticle);
-//     contentArticle.appendChild(descArticle);
-//     if(items != null){
-//         items.appendChild(anchor);
-//     }   
-    
-//  }

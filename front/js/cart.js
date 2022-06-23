@@ -2,7 +2,7 @@
 const articleArray =  [];
 localStorageArticle();
 articleArray.forEach((item) => contentArticle(item));
-
+let price = null;
 function localStorageArticle(){
     const nmbArticle = localStorage.length;
     // console.log("vous avez ajouter : ", nmbArticle);
@@ -14,17 +14,22 @@ function localStorageArticle(){
         articleArray.push(articleObjet);
         // console.log(articleArray);
     }
-   }
-   
-  
-//ITEM
-// altText: "Photo d'un canapé jaune et noir, quattre places"
-// articleId: "415b7cacb65d43b2b5c1ff70f3393ad1"
-// color: "Black/Yellow"
-// imgUrl: "http://localhost:3000/images/kanap02.jpeg"
-// price: 4499
-// quantity: 1
+}
+ 
+function callPriceAndId(){
+    fetch ("http://localhost:3000/api/products")
+    .then((response) => response.json())
+    .then((data) => {
+        // console.log(data)
+        return priceArticle(data);
+    })
+}
+callPriceAndId();
 
+function priceArticle(data){
+     let itemId = data._id;
+     let itemPrice = data.price;
+}
 
 // bloc article qui contient l'ensemble des items du produit dans le panier 
 function contentArticle(item) {
@@ -59,8 +64,8 @@ function buildImage(item){
 
     divImage.classList.add('cart__item__img');
 
-    image.src = item.imgUrl;
-    image.alt = item.altText;
+    image.src = item.imageUrl;
+    image.alt = item.altTxt;
 
     divImage.appendChild(image)
 
@@ -161,6 +166,7 @@ function displayTotalPrice(item){
     })
     // console.log(total);
     totalPrice.textContent = total;
+    priceArticle(item);
 }
 // function changement on click quantité dans le panier
 function updatePriceAndQuantity(articleId, newQuantitevalue, item){//retourne une nouvelle quantité en passant par array localStorage
@@ -180,3 +186,4 @@ function saveNewDataLocalStorage(item){
     localStorage.setItem(key, newData);
     console.log('newData', newData);
 }
+
