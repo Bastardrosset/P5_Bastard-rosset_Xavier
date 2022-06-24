@@ -6,17 +6,9 @@ fetch("http://localhost:3000/api/products")// appel a l'API
           
         }
       )
-
-function addProducts(data){// recupere les données de fetch
-    // const _id = data[0]._id;// recupere l'id de l'article
-    // const imageUrl = data[0].imageUrl;// recupere l'image de l'article
-    // const altTxt = data[0].altTxt;
-    // const name = data[0].name;// recupere le nom de l'article
-    // const description = data[0].description;// recupere la description de l'article
-
+function addProducts(data){
     data.forEach((kanap) =>{
     const {_id, imageUrl, altTxt, name, description} = kanap
-
     const image = buildImage(imageUrl, altTxt);// appel la fonction buildImage
     const anchor= makeAnchor(_id); // appel fonction makeAnchor avec imageUrl, resultat est passé a anchor
     const article = document.createElement('article');// creation de l'élément article
@@ -35,7 +27,6 @@ function makeAnchor(id){// creation du lien vers l'article
     anchor.href = `./product.html?id=${id}`;
     return anchor;
 }
-
 function linkItems(anchor, article){// selection de l'élément auquel on ajoute le l'élément lien et l'élément article
     const items = document.querySelector("#items");
     if (items != null){// si items est trouvé
@@ -43,7 +34,6 @@ function linkItems(anchor, article){// selection de l'élément auquel on ajoute
     anchor.append(article);// ajout dans anchor l'élément article
     }
 }
-
 function buildImage(imageUrl, altTxt){// creation du bloc image
     const image = document.createElement('img');
     image.src = imageUrl;
@@ -51,7 +41,6 @@ function buildImage(imageUrl, altTxt){// creation du bloc image
 
     return image;
 }
-
 function buildH3(name){// creation du titre de l'article
     const titleArticle = document.createElement('h3');
     titleArticle.textContent = name;
@@ -59,7 +48,6 @@ function buildH3(name){// creation du titre de l'article
 
     return titleArticle;
 }
-
 function txtArticle(description){// creation du descriptif de l'article
     const textArticle = document.createElement('p');
     textArticle.textContent = description;

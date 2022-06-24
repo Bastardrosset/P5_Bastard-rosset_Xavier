@@ -3,8 +3,6 @@ const url = new URLSearchParams(url_string);
 const articleId = url.get('id');
 let kanap = null;
 
-//  console.log({articleId});
-
 function showProduct(){
     fetch (`http://localhost:3000/api/products/${articleId}`)// appel les items en fonction de leur id
     .then((response) => response.json())
@@ -26,8 +24,7 @@ function attachImage(){
     image.alt = kanap.altTxt;// attribut le text alternatif de l'article
 
     const blocImg = document.querySelector('.item__img');// selection du div itemm__img
-    if (blocImg != null)// si item__img existe, attribut l'image dans le bloc
-    {
+    if (blocImg != null){// si item__img existe, attribut l'image dans le bloc
         blocImg.appendChild(image);
     }
 }
@@ -70,7 +67,7 @@ function addEventListenerToaddToCart(){
     var button = document.querySelector('#addToCart');// attribut une variable button a l'élément button
 if(button != null){
     button.addEventListener('click', addToCart)
-}
+    }
 }
 
 function addToCart(){

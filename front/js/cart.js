@@ -1,4 +1,3 @@
-
 const articleArray =  [];
 localStorageArticle();
 articleArray.forEach((item) => contentArticle(item));
@@ -15,22 +14,26 @@ function localStorageArticle(){
         // console.log(articleArray);
     }
 }
- 
-function callPriceAndId(){
-    fetch ("http://localhost:3000/api/products")
-    .then((response) => response.json())
-    .then((data) => {
-        // console.log(data)
-        return priceArticle(data);
-    })
-}
-callPriceAndId();
+ // function callPriceAndId(){
+//     fetch ("http://localhost:3000/api/products")
+//     .then((response) => response.json())
+//     .then((data) => { 
+//         // console.log(data)
+//         return priceAndIdItem(data)}
+//     )
+// }
 
-function priceArticle(data){
-     let itemId = data._id;
-     let itemPrice = data.price;
-}
+//  function priceAndIdItem(data){
+// data.forEach((item) =>{
+//     const {_id, price} = item
+    
+//     let itemId = _id;
+//     let itemPrice = price;
+//     console.log(itemId, itemPrice)
+//     })
+// // const price = articleArray.find((item) => item.articleId === itemId);
 
+// }
 // bloc article qui contient l'ensemble des items du produit dans le panier 
 function contentArticle(item) {
     const blocArticle = buildArticle(item);
@@ -45,7 +48,6 @@ function contentArticle(item) {
 // bloc section du document
 function contentSection(blocArticle){
     const section = document.querySelector('#cart__items').appendChild(blocArticle);
-
 }
 // Bloc article du document
 function buildArticle(item){
@@ -71,7 +73,6 @@ function buildImage(item){
 
     return divImage;
 }
-
 // description du produit dans le panier regroupe fonctions buildItemDescription && buildBlocQuantity
 function buildDescription(item){
     const blocDivDescription = document.createElement('div');
@@ -89,7 +90,6 @@ function buildDescription(item){
     blocSetting.appendChild(divdeleteItem);
     return blocDivDescription;
 }
-
 //descriptif nom, couleur et prix de l'article dans le panier
 function buildItemDescription(item){
     const divDescription = document.createElement ('div');
@@ -109,7 +109,6 @@ function buildItemDescription(item){
 
     return divDescription;
 }
-
 // quantite d'article & input du panier
 function buildBlocQuantity(item){
     const blocSetting = document.createElement('div');
@@ -135,9 +134,7 @@ function buildBlocQuantity(item){
 
     return blocSetting;
 }
-
-
-function buildDeleteItem(item){
+function buildDeleteItem(_blocSetting){
     const divdeleteItem = document.createElement ('div');
     const p = document.createElement ('p');
     
@@ -148,16 +145,15 @@ function buildDeleteItem(item){
 
 return divdeleteItem;
 }
-
 // fonction de calcul du nombre d'article total dans le panier
-function displayTotalQuantity(item){
+function displayTotalQuantity(_item){
     const totalQuantity = document.querySelector('#totalQuantity');
     const totalItemQuantity = articleArray.reduce((total, item) => total + item.quantity, 0);// methode reduce() renvoie la valeur cumulé dans array localStorage
     
     totalQuantity.textContent = totalItemQuantity;
 }
 // fonction de calcul de prix total dans le panier
-function displayTotalPrice(item){
+function displayTotalPrice(_item){
     const totalPrice = document.querySelector('#totalPrice');
     let total = 0;
     articleArray.forEach(item =>{
@@ -166,24 +162,22 @@ function displayTotalPrice(item){
     })
     // console.log(total);
     totalPrice.textContent = total;
-    priceArticle(item);
 }
 // function changement on click quantité dans le panier
-function updatePriceAndQuantity(articleId, newQuantitevalue, item){//retourne une nouvelle quantité en passant par array localStorage
+function updatePriceAndQuantity(articleId, newQuantiteValue, item){//retourne une nouvelle quantité en passant par array localStorage
     const newTotalQuantity = articleArray.find((item) => item.articleId === articleId);// methode find() renvoie la valeur du premier élément
-    newTotalQuantity.quantity = Number(newQuantitevalue);
+    newTotalQuantity.quantity = Number(newQuantiteValue);
     item.quantity = newTotalQuantity.quantity;
 
     displayTotalQuantity();
     displayTotalPrice();
     saveNewDataLocalStorage(item);
 }
-
 // fonction enregistre les nouvelles quantitées quand EventListener 'click' execute la fonction updatePriceAndQuantity(item.articleId, inputQuantite.value))
 function saveNewDataLocalStorage(item){
     const newData = JSON.stringify(item)
     const key = `${item.articleId}-${item.color}`;
     localStorage.setItem(key, newData);
-    console.log('newData', newData);
+    // console.log('newData', newData);
 }
 
