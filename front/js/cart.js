@@ -14,26 +14,28 @@ function localStorageArticle(){
         // console.log(articleArray);
     }
 }
- // function callPriceAndId(){
-//     fetch ("http://localhost:3000/api/products")
-//     .then((response) => response.json())
-//     .then((data) => { 
-//         // console.log(data)
-//         return priceAndIdItem(data)}
-//     )
-// }
+function callPriceAndId(){
+    fetch ("http://localhost:3000/api/products")
+    .then((response) => response.json())
+    .then((data) =>  priceAndIdItem(data) 
+        //  console.log(data)
+    )
+}
+function priceAndIdItem(data){
+    data.forEach((item) =>{
+        const {_id, price} = item
+        // console.log(_id, price)
 
-//  function priceAndIdItem(data){
-// data.forEach((item) =>{
-//     const {_id, price} = item
-    
-//     let itemId = _id;
-//     let itemPrice = price;
-//     console.log(itemId, itemPrice)
-//     })
-// // const price = articleArray.find((item) => item.articleId === itemId);
-
-// }
+        comparedId(articleArray, item)
+    })
+}
+function comparedId(articleArray, item){
+    articleArray.findIndex((item) => item.articleId === item._id)
+    // console.log(item)
+    // if(item.articleId === item._id){
+    //     articleArray.push(item.price)
+    // }
+}
 // bloc article qui contient l'ensemble des items du produit dans le panier 
 function contentArticle(item) {
     const blocArticle = buildArticle(item);
@@ -181,3 +183,5 @@ function saveNewDataLocalStorage(item){
     // console.log('newData', newData);
 }
 
+callPriceAndId();
+comparedId(articleArray);

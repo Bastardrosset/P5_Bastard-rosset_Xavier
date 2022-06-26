@@ -5,7 +5,7 @@ fetch("http://localhost:3000/api/products")// appel a l'API
       return addProducts(data);// reponse passe le resultat a fonction addProduct
           
         }
-      )
+    )
 function addProducts(data){
     data.forEach((kanap) =>{
     const {_id, imageUrl, altTxt, name, description} = kanap
@@ -21,7 +21,6 @@ function addProducts(data){
     linkItems(anchor, article);// passe le resultat du lien anchor a fonction linkItems
     })
 }
-
 function makeAnchor(id){// creation du lien vers l'article
     const anchor = document.createElement('a');
     anchor.href = `./product.html?id=${id}`;

@@ -10,14 +10,13 @@ function showProduct(){
 }
 function detailsArticle(_kanap){
     kanap = _kanap;
-    console.log(_kanap);
+    // console.log(_kanap);
     attachImage();
     attachTitle();
     attachPrice();
     attachDescription();
     attachColors();
 }
-
 function attachImage(){
     const image = document.createElement('img');// creation de l'élément img
     image.src = kanap.imageUrl;// attribut l'image de l'article
@@ -28,28 +27,24 @@ function attachImage(){
         blocImg.appendChild(image);
     }
 }
-
 function attachTitle(){
     const title = document.querySelector('#title');
     if(title != null){
         title.textContent = kanap.name;
     }
 }
-
 function attachPrice(){
     const span = document.querySelector('#price');
     if (span != null){
         span.textContent = kanap.price;
     }
 }
-
 function attachDescription(){
     const p = document.querySelector('#description');
     if (p != null){
         p.textContent = kanap.description;
     }
 }
-
 function attachColors(){
     const select = document.querySelector('#colors');// selection de élément auquel on attribut option value
     
@@ -62,14 +57,12 @@ function attachColors(){
         })
     }
 }
-
 function addEventListenerToaddToCart(){
     var button = document.querySelector('#addToCart');// attribut une variable button a l'élément button
 if(button != null){
     button.addEventListener('click', addToCart)
     }
 }
-
 function addToCart(){
     const selectedColor = document.querySelector('#colors').value
     const selectedQuantity = document.querySelector('#quantity').value
@@ -78,7 +71,6 @@ function addToCart(){
     saveCart(selectedColor, selectedQuantity);
     redirectCart();
 }
-
 function saveCart(selectedColor,selectedQuantity){
     const key = `${articleId}-${selectedColor}`;
     const data = {// objet auquel on attribut les valeurs a enregistrer afin de les communiquer a la page cart.js
@@ -91,15 +83,13 @@ function saveCart(selectedColor,selectedQuantity){
     }
      localStorage.setItem(key, JSON.stringify(data));// store les valeurs enregistrés dans l'objet data et les sérialises en format json 
 }
-
 function choiceSelection(selectedColor,selectedQuantity){
     if(selectedColor == null || selectedQuantity == null || selectedColor === '' || selectedQuantity == 0){
         alert("Veuillez choisir une couleur et une quantitée !")// si les choix n'ont pas de valeur, message alert s'execute
         return true;// empeche d'aller plus loin si les conditions non remplis
     }
 }
-
-function redirectCart(){// redirige vers la page panier
+function redirectCart(){
     window.location.href = "cart.html";
 }
 showProduct();
