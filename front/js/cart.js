@@ -11,7 +11,7 @@ function localStorageArticle(){
          const articleObjet = JSON.parse(article);
     
         articleArray.push(articleObjet);
-        // console.log(articleArray);
+        console.log(articleArray);
     }
 }
 function callPriceAndId(){
@@ -26,30 +26,39 @@ function priceAndIdItem(data){
         const {_id, price} = item
         // console.log(_id, price)
 
-        comparedId(articleArray, item)
+        comparedId(item)
     })
 }
-function comparedId(articleArray, item){
-    articleArray.findIndex((item) => item.articleId === item._id)
-    // console.log(item)
-    // if(item.articleId === item._id){
-    //     articleArray.push(item.price)
-    // }
+async function comparedId(item){
+    const nmbArticle = localStorage.length;
+    for(i = 0; i < nmbArticle; i++){
+        const test = Object.values(articleArray[0])
+        if(test[0] === item._id){
+            const price = item.price;
+             console.log(price);
+        }
+    }
 }
-// bloc article qui contient l'ensemble des items du produit dans le panier 
+//bloc article qui contient l'ensemble des items du produit dans le panier 
 function contentArticle(item) {
+    const section = contentSection();
     const blocArticle = buildArticle(item);
-    contentSection(blocArticle);
     const divImage = buildImage(item);
-    blocArticle.appendChild(divImage);
     const blocDivDescription = buildDescription(item);
+
+    section.appendChild(blocArticle);
+    blocArticle.appendChild(divImage);
     blocArticle.appendChild(blocDivDescription);
+    
+    contentSection();
     displayTotalQuantity(item);
     displayTotalPrice(item);
 }
 // bloc section du document
-function contentSection(blocArticle){
-    const section = document.querySelector('#cart__items').appendChild(blocArticle);
+function contentSection(){
+    const section = document.querySelector('#cart__items');
+
+    return section;
 }
 // Bloc article du document
 function buildArticle(item){
@@ -58,6 +67,7 @@ function buildArticle(item){
     blocArticle.classList.add('cart__item');
     blocArticle.dataset.id = item.articleId;
     blocArticle.dataset.color = item.color;
+    // console.log("blocArticle",blocArticle);
 
     return blocArticle;
 }
@@ -71,25 +81,20 @@ function buildImage(item){
     image.src = item.imageUrl;
     image.alt = item.altTxt;
 
-    divImage.appendChild(image)
+    divImage.appendChild(image);
 
     return divImage;
 }
 // description du produit dans le panier regroupe fonctions buildItemDescription && buildBlocQuantity
 function buildDescription(item){
     const blocDivDescription = document.createElement('div');
-    blocDivDescription.classList.add('cart__item__content');
-
     const divDescription = buildItemDescription(item);
-
     const blocSetting = buildBlocQuantity(item);
-    
+
+    blocDivDescription.classList.add('cart__item__content');
     blocDivDescription.appendChild(divDescription);
     blocDivDescription.appendChild(blocSetting);
-    
-    const divdeleteItem = buildDeleteItem(item);
 
-    blocSetting.appendChild(divdeleteItem);
     return blocDivDescription;
 }
 //descriptif nom, couleur et prix de l'article dans le panier
@@ -108,7 +113,6 @@ function buildItemDescription(item){
     divDescription.appendChild(title);
     divDescription.appendChild(colorChoice);
     divDescription.appendChild(price);
-
     return divDescription;
 }
 // quantite d'article & input du panier
@@ -116,7 +120,8 @@ function buildBlocQuantity(item){
     const blocSetting = document.createElement('div');
     const divQuantity = document.createElement('div');
     const p = document.createElement('p');
-    const inputQuantite = document.createElement('input') 
+    const inputQuantite = document.createElement('input'); 
+    const divdeleteItem = buildDeleteItem(item);
 
     blocSetting.classList.add('cart__item__content__settings');
     divQuantity.classList.add('cart__item__content__settings__quantity');
@@ -132,30 +137,51 @@ function buildBlocQuantity(item){
 
     blocSetting.appendChild(divQuantity);
     divQuantity.appendChild(p);
-    divQuantity.appendChild(inputQuantite) ;
+    divQuantity.appendChild(inputQuantite);
+    blocSetting.appendChild(divdeleteItem);
 
     return blocSetting;
 }
-function buildDeleteItem(_blocSetting){
+function buildDeleteItem(item){
     const divdeleteItem = document.createElement ('div');
-    const p = document.createElement ('p');
+    const p = document.createElement('p');
     
-    divdeleteItem.classList.add ('cart__item__content__settings__delete');
-    p.classList.add ('deleteItem')
-    p.textContent = "supprimer"
-    divdeleteItem.appendChild(p)
+    divdeleteItem.classList.add('cart__item__content__settings__delete');
+    p.classList.add('deleteItem');
+    p.textContent = "supprimer";
+    divdeleteItem.appendChild(p);
 
-return divdeleteItem;
+    divdeleteItem.addEventListener('click', () => deleteItem(item));
+
+    return divdeleteItem;
+}
+function deleteItem(item){
+    // console.log('item to delete',item);
+    const itemToDelete = articleArray.findIndex((selected) => selected.articleId === item.articleId && selected.color === item.color);
+    //  console.log('item to delete',itemToDelete);
+     articleArray.splice(itemToDelete, 1);
+    //  console.log(articleArray);
+
+     displayTotalQuantity();
+     displayTotalPrice();
+     deleteDataLocalStorage(item);
+     deleteArticleFromPage(item);
+}
+function deleteArticleFromPage(item){
+    const blocArticle = buildArticle(item);
+    const articleToDelete = document.querySelector(`[data-id="${item.articleId}"][data-color="${item.color}"]`);
+    // console.log('deleting article', articleToDelete);
+    articleToDelete.remove(item);
 }
 // fonction de calcul du nombre d'article total dans le panier
-function displayTotalQuantity(_item){
+function displayTotalQuantity(){
     const totalQuantity = document.querySelector('#totalQuantity');
     const totalItemQuantity = articleArray.reduce((total, item) => total + item.quantity, 0);// methode reduce() renvoie la valeur cumulé dans array localStorage
     
     totalQuantity.textContent = totalItemQuantity;
 }
 // fonction de calcul de prix total dans le panier
-function displayTotalPrice(_item){
+function displayTotalPrice(){
     const totalPrice = document.querySelector('#totalPrice');
     let total = 0;
     articleArray.forEach(item =>{
@@ -173,11 +199,17 @@ function updatePriceAndQuantity(articleId, newQuantiteValue, item){//retourne un
 
     displayTotalQuantity();
     displayTotalPrice();
-    saveNewDataLocalStorage(item);
+    deleteDataLocalStorage(item);
+}
+function deleteDataLocalStorage(item){
+    const key = `${item.articleId}-${item.color}`;
+    // console.log('on retire cette key',key);
+    localStorage.removeItem(key);
+
 }
 // fonction enregistre les nouvelles quantitées quand EventListener 'click' execute la fonction updatePriceAndQuantity(item.articleId, inputQuantite.value))
 function saveNewDataLocalStorage(item){
-    const newData = JSON.stringify(item)
+    const newData = JSON.stringify(item);
     const key = `${item.articleId}-${item.color}`;
     localStorage.setItem(key, newData);
     // console.log('newData', newData);
