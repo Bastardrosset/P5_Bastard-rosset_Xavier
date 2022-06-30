@@ -11,7 +11,7 @@ function localStorageArticle(){
          const articleObjet = JSON.parse(article);
     
         articleArray.push(articleObjet);
-        console.log(articleArray);
+        // console.log(articleArray);
     }
 }
 function callPriceAndId(){
@@ -35,7 +35,7 @@ async function comparedId(item){
         const test = Object.values(articleArray[0])
         if(test[0] === item._id){
             const price = item.price;
-             console.log(price);
+            //  console.log(price);
         }
     }
 }
@@ -71,7 +71,7 @@ function buildArticle(item){
 
     return blocArticle;
 }
-// image du produit dans le panier
+// image du produit 
 function buildImage(item){
     const divImage = document.createElement('div');
     const image = document.createElement('img');
@@ -85,7 +85,7 @@ function buildImage(item){
 
     return divImage;
 }
-// description du produit dans le panier regroupe fonctions buildItemDescription && buildBlocQuantity
+// description du produit, regroupe fonctions buildItemDescription && buildBlocQuantity
 function buildDescription(item){
     const blocDivDescription = document.createElement('div');
     const divDescription = buildItemDescription(item);
@@ -97,7 +97,7 @@ function buildDescription(item){
 
     return blocDivDescription;
 }
-//descriptif nom, couleur et prix de l'article dans le panier
+//descriptif nom, couleur et prix de l'article 
 function buildItemDescription(item){
     const divDescription = document.createElement ('div');
     const title = document.createElement ('h2');
@@ -115,7 +115,7 @@ function buildItemDescription(item){
     divDescription.appendChild(price);
     return divDescription;
 }
-// quantite d'article & input du panier
+// quantite d'article & input 
 function buildBlocQuantity(item){
     const blocSetting = document.createElement('div');
     const divQuantity = document.createElement('div');
@@ -142,6 +142,7 @@ function buildBlocQuantity(item){
 
     return blocSetting;
 }
+// boutton supprimer
 function buildDeleteItem(item){
     const divdeleteItem = document.createElement ('div');
     const p = document.createElement('p');
@@ -155,6 +156,7 @@ function buildDeleteItem(item){
 
     return divdeleteItem;
 }
+// cible l'article à supprimer dans localStorage
 function deleteItem(item){
     // console.log('item to delete',item);
     const itemToDelete = articleArray.findIndex((selected) => selected.articleId === item.articleId && selected.color === item.color);
@@ -167,6 +169,7 @@ function deleteItem(item){
      deleteDataLocalStorage(item);
      deleteArticleFromPage(item);
 }
+// fonction supprimer sur la page
 function deleteArticleFromPage(item){
     const blocArticle = buildArticle(item);
     const articleToDelete = document.querySelector(`[data-id="${item.articleId}"][data-color="${item.color}"]`);
@@ -201,11 +204,11 @@ function updatePriceAndQuantity(articleId, newQuantiteValue, item){//retourne un
     displayTotalPrice();
     deleteDataLocalStorage(item);
 }
+// fonction supprimer dans localStorage
 function deleteDataLocalStorage(item){
     const key = `${item.articleId}-${item.color}`;
     // console.log('on retire cette key',key);
     localStorage.removeItem(key);
-
 }
 // fonction enregistre les nouvelles quantitées quand EventListener 'click' execute la fonction updatePriceAndQuantity(item.articleId, inputQuantite.value))
 function saveNewDataLocalStorage(item){
@@ -215,5 +218,48 @@ function saveNewDataLocalStorage(item){
     // console.log('newData', newData);
 }
 
+// FORMULAIRE
+function selectedSubmitForm(){
+    const orderButton = document.querySelector('#order');
+    orderButton.addEventListener('click',(e) => submitForm(e));
+}
+function submitForm(e){
+    e.preventDefault();
+    if(articleArray.length === 0){
+        alert('S\'il vous plaît choisissez un article')
+    }
+    const form = document.querySelector('.cart__order__form');
+    const body = buildRequestBody();
+    fetch("http://localhost:3000/api/products/order", {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+            "Content-Type" : "application/json",
+        }
+    })
+    .then((response) => response.json())
+    .then((res) => console.log(res))
+    //  console.log(form.elements);
+}
+function buildRequestBody(){
+    const form = document.querySelector('.cart__order__form');
+    const firstName = form.elements.firstName.value;
+    const lastName = form.elements.lastName.value;
+    const address = form.elements.address.value;
+    const city = form.elements.city.value;
+    const email = form.elements.email.value;
+  const body = {
+    contact: {
+        firstName: firstName,
+        lastName: lastName,
+        address: address,
+        city: city,
+        email: email
+    },
+    products: ["107fb5b75607497b96722bda5b504926"] ,
+}
+ return body;
+}
 callPriceAndId();
 comparedId(articleArray);
+selectedSubmitForm();
