@@ -1,8 +1,7 @@
 const articleArray =  [];
-localStorageArticle();
 articleArray.forEach((item) => contentArticle(item));
 let price = null;
-function localStorageArticle(){
+function localStorageArticle() {
     const nmbArticle = localStorage.length;
     // console.log("vous avez ajouter : ", nmbArticle);
     for(let i = 0; i < nmbArticle; i++){
@@ -14,30 +13,15 @@ function localStorageArticle(){
         // console.log(articleArray);
     }
 }
-function callPriceAndId(){
-    fetch ("http://localhost:3000/api/products")
-    .then((response) => response.json())
-    .then((data) =>  priceAndIdItem(data) 
-        //  console.log(data)
-    )
-}
-function priceAndIdItem(data){
-    data.forEach((item) =>{
-        const {_id, price} = item
-        // console.log(_id, price)
-
-        comparedId(item)
+function callPriceAndId() {
+    articleArray.forEach((product) => {
+        fetch(`http://localhost:3000/api/products/${product.articleId}`)
+            .then((response) => response.json())
+            .then((data) => {
+                product.price = data.price
+                contentArticle(product);
+            });
     })
-}
-async function comparedId(item){
-    const nmbArticle = localStorage.length;
-    for(i = 0; i < nmbArticle; i++){
-        const test = Object.values(articleArray[0])
-        if(test[0] === item._id){
-            const price = item.price;
-            //  console.log(price);
-        }
-    }
 }
 //bloc article qui contient l'ensemble des items du produit dans le panier 
 function contentArticle(item) {
@@ -45,7 +29,6 @@ function contentArticle(item) {
     const blocArticle = buildArticle(item);
     const divImage = buildImage(item);
     const blocDivDescription = buildDescription(item);
-
     section.appendChild(blocArticle);
     blocArticle.appendChild(divImage);
     blocArticle.appendChild(blocDivDescription);
@@ -55,15 +38,13 @@ function contentArticle(item) {
     displayTotalPrice(item);
 }
 // bloc section du document
-function contentSection(){
-    const section = document.querySelector('#cart__items');
-
+function contentSection() {
+    const section = document.getElementById('cart__items');
     return section;
 }
 // Bloc article du document
-function buildArticle(item){
+function buildArticle(item) {
     const blocArticle = document.createElement('article');
-
     blocArticle.classList.add('cart__item');
     blocArticle.dataset.id = item.articleId;
     blocArticle.dataset.color = item.color;
@@ -72,7 +53,7 @@ function buildArticle(item){
     return blocArticle;
 }
 // image du produit 
-function buildImage(item){
+function buildImage(item) {
     const divImage = document.createElement('div');
     const image = document.createElement('img');
 
@@ -86,7 +67,7 @@ function buildImage(item){
     return divImage;
 }
 // description du produit, regroupe fonctions buildItemDescription && buildBlocQuantity
-function buildDescription(item){
+function buildDescription(item) {
     const blocDivDescription = document.createElement('div');
     const divDescription = buildItemDescription(item);
     const blocSetting = buildBlocQuantity(item);
@@ -98,7 +79,7 @@ function buildDescription(item){
     return blocDivDescription;
 }
 //descriptif nom, couleur et prix de l'article 
-function buildItemDescription(item){
+function buildItemDescription(item) {
     const divDescription = document.createElement ('div');
     const title = document.createElement ('h2');
     const colorChoice = document.createElement ('p');
@@ -113,10 +94,11 @@ function buildItemDescription(item){
     divDescription.appendChild(title);
     divDescription.appendChild(colorChoice);
     divDescription.appendChild(price);
+
     return divDescription;
 }
 // quantite d'article & input 
-function buildBlocQuantity(item){
+function buildBlocQuantity(item) {
     const blocSetting = document.createElement('div');
     const divQuantity = document.createElement('div');
     const p = document.createElement('p');
@@ -131,7 +113,7 @@ function buildBlocQuantity(item){
     inputQuantite.min = "1";
     inputQuantite.max = "100";
     inputQuantite.value = item.quantity;
-    inputQuantite.addEventListener('input', () => updatePriceAndQuantity(item.articleId, inputQuantite.value,item));
+    inputQuantite.addEventListener('click', () => updatePriceAndQuantity(item.articleId, inputQuantite.value, item));
 
     p.textContent =`Qté : `;
 
@@ -143,7 +125,7 @@ function buildBlocQuantity(item){
     return blocSetting;
 }
 // boutton supprimer
-function buildDeleteItem(item){
+function buildDeleteItem(item) {
     const divdeleteItem = document.createElement ('div');
     const p = document.createElement('p');
     
@@ -151,41 +133,39 @@ function buildDeleteItem(item){
     p.classList.add('deleteItem');
     p.textContent = "supprimer";
     divdeleteItem.appendChild(p);
-
     divdeleteItem.addEventListener('click', () => deleteItem(item));
 
     return divdeleteItem;
 }
 // cible l'article à supprimer dans localStorage
-function deleteItem(item){
+function deleteItem(item) {
     // console.log('item to delete',item);
     const itemToDelete = articleArray.findIndex((selected) => selected.articleId === item.articleId && selected.color === item.color);
     //  console.log('item to delete',itemToDelete);
      articleArray.splice(itemToDelete, 1);
     //  console.log(articleArray);
-
      displayTotalQuantity();
      displayTotalPrice();
      deleteDataLocalStorage(item);
      deleteArticleFromPage(item);
 }
 // fonction supprimer sur la page
-function deleteArticleFromPage(item){
+function deleteArticleFromPage(item) {
     const blocArticle = buildArticle(item);
-    const articleToDelete = document.querySelector(`[data-id="${item.articleId}"][data-color="${item.color}"]`);
+    const articleToDelete = document.getElementById(`[data-id="${item.articleId}"][data-color="${item.color}"]`);
     // console.log('deleting article', articleToDelete);
-    articleToDelete.remove(item);
+    articleToDelete.removeItem(item);
 }
 // fonction de calcul du nombre d'article total dans le panier
-function displayTotalQuantity(){
-    const totalQuantity = document.querySelector('#totalQuantity');
+function displayTotalQuantity() {
+    const totalQuantity = document.getElementById('totalQuantity');
     const totalItemQuantity = articleArray.reduce((total, item) => total + item.quantity, 0);// methode reduce() renvoie la valeur cumulé dans array localStorage
     
     totalQuantity.textContent = totalItemQuantity;
 }
 // fonction de calcul de prix total dans le panier
-function displayTotalPrice(){
-    const totalPrice = document.querySelector('#totalPrice');
+function displayTotalPrice() {
+    const totalPrice = document.getElementById('totalPrice');
     let total = 0;
     articleArray.forEach(item =>{
         const totalItem = item.price * item.quantity;
@@ -195,23 +175,28 @@ function displayTotalPrice(){
     totalPrice.textContent = total;
 }
 // function changement on click quantité dans le panier
-function updatePriceAndQuantity(articleId, newQuantiteValue, item){//retourne une nouvelle quantité en passant par array localStorage
+function updatePriceAndQuantity(articleId, newQuantiteValue, item) {//retourne une nouvelle quantité en passant par array localStorage
     const newTotalQuantity = articleArray.find((item) => item.articleId === articleId);// methode find() renvoie la valeur du premier élément
     newTotalQuantity.quantity = Number(newQuantiteValue);
     item.quantity = newTotalQuantity.quantity;
 
     displayTotalQuantity();
     displayTotalPrice();
-    deleteDataLocalStorage(item);
+    updateProductLocalStorage(item);
+}
+function updateProductLocalStorage(item) {
+    const key = `${item.articleId}-${item.color}`;
+    localStorage.setItem(key, JSON.stringify(item));
 }
 // fonction supprimer dans localStorage
-function deleteDataLocalStorage(item){
+function deleteDataLocalStorage(item) {
     const key = `${item.articleId}-${item.color}`;
     // console.log('on retire cette key',key);
     localStorage.removeItem(key);
+    location.reload();
 }
 // fonction enregistre les nouvelles quantitées quand EventListener 'click' execute la fonction updatePriceAndQuantity(item.articleId, inputQuantite.value))
-function saveNewDataLocalStorage(item){
+function saveNewDataLocalStorage(item) {
     const newData = JSON.stringify(item);
     const key = `${item.articleId}-${item.color}`;
     localStorage.setItem(key, newData);
@@ -225,9 +210,14 @@ function selectedSubmitForm(){
 }
 function submitForm(e){
     e.preventDefault();
-    if(articleArray.length === 0){
+    if(localStorage.length === 0){
         alert('S\'il vous plaît choisissez un article')
+        return
     }
+    if (ifFormInvalid()){
+        return
+    }
+
     const form = document.querySelector('.cart__order__form');
     const body = buildRequestBody();
     fetch("http://localhost:3000/api/products/order", {
@@ -239,7 +229,7 @@ function submitForm(e){
     })
     .then((response) => response.json())
     .then((res) => console.log(res))
-    //  console.log(form.elements);
+    //   console.log(form.elements);
 }
 function buildRequestBody(){
     const form = document.querySelector('.cart__order__form');
@@ -256,10 +246,36 @@ function buildRequestBody(){
         city: city,
         email: email
     },
-    products: ["107fb5b75607497b96722bda5b504926"] ,
+    products: getIdsFromLocalStorage(),
 }
+console.log(body);
  return body;
 }
+function getIdsFromLocalStorage(){
+    const numberOfProduct = localStorage.length;
+    const ids = [];
+        for (let i = 0; i < numberOfProduct; i++){
+            const key = localStorage.key(i);
+            // console.log(key);
+            const id = key.split('-')[0];
+            ids.push(id);
+            // console.log(ids);
+        }
+        return ids;
+}
+function ifFormInvalid(){
+    const form = document.querySelector('.cart__order__form');
+    const inputs = document.querySelectorAll('input');
+        inputs.forEach((input) =>{
+            if (input.value === ""){
+                alert("Veuillez remplir tous les champs")
+                return true;
+            }
+            return false;
+        })
+}
+localStorageArticle();
 callPriceAndId();
-comparedId(articleArray);
-selectedSubmitForm();
+selectedSubmitForm(); 
+buildRequestBody();
+getIdsFromLocalStorage();

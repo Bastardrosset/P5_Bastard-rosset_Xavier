@@ -28,25 +28,25 @@ function attachImage(){
     }
 }
 function attachTitle(){
-    const title = document.querySelector('#title');
+    const title = document.getElementById('title');
     if(title != null){
         title.textContent = kanap.name;
     }
 }
 function attachPrice(){
-    const span = document.querySelector('#price');
+    const span = document.getElementById('price');
     if (span != null){
         span.textContent = kanap.price;
     }
 }
 function attachDescription(){
-    const p = document.querySelector('#description');
+    const p = document.getElementById('description');
     if (p != null){
         p.textContent = kanap.description;
     }
 }
 function attachColors(){
-    const select = document.querySelector('#colors');// selection de élément auquel on attribut option value
+    const select = document.getElementById('colors');// selection de élément auquel on attribut option value
     
      if (select != null){
          kanap.colors.forEach((color) => {// boucle sur les options couleurs disponible dans l'array
@@ -58,14 +58,14 @@ function attachColors(){
     }
 }
 function addEventListenerToaddToCart(){
-    var button = document.querySelector('#addToCart');// attribut une variable button a l'élément button
+    var button = document.getElementById('addToCart');// attribut une variable button a l'élément button
 if(button != null){
-    button.addEventListener('click', addToCart)
+    button.addEventListener('click', addToCart);
     }
 }
 function addToCart(){
-    const selectedColor = document.querySelector('#colors').value
-    const selectedQuantity = document.querySelector('#quantity').value
+    const selectedColor = document.getElementById('colors').value;
+    const selectedQuantity = document.getElementById('quantity').value;
             
     if (choiceSelection(selectedColor, selectedQuantity)) return; 
     saveCart(selectedColor, selectedQuantity);

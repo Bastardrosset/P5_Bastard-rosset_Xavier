@@ -27,7 +27,7 @@ function makeAnchor(id){// creation du lien vers l'article
     return anchor;
 }
 function linkItems(anchor, article){// selection de l'élément auquel on ajoute le l'élément lien et l'élément article
-    const items = document.querySelector("#items");
+    const items = document.getElementById("items");
     if (items != null){// si items est trouvé
     items.appendChild(anchor);// on lui ajoute le lien anchor
     anchor.append(article);// ajout dans anchor l'élément article
