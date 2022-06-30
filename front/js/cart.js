@@ -1,45 +1,27 @@
-const articleArray =  [];
-localStorageArticle();
-articleArray.forEach((item) => contentArticle(item));
-let price = null;
-function localStorageArticle(){
+const articleArray = [];
+
+function localStorageArticle() {
     const nmbArticle = localStorage.length;
-    // console.log("vous avez ajouter : ", nmbArticle);
-    for(let i = 0; i < nmbArticle; i++){
+    for (let i = 0; i < nmbArticle; i++) {
         const article = localStorage.getItem(localStorage.key(i));
-        // console.log("objet a la position ", i, `est l'`, article)
-         const articleObjet = JSON.parse(article);
-    
+        const articleObjet = JSON.parse(article);
         articleArray.push(articleObjet);
-        // console.log(articleArray);
     }
 }
-function callPriceAndId(){
-    fetch ("http://localhost:3000/api/products")
-    .then((response) => response.json())
-    .then((data) =>  priceAndIdItem(data) 
-        //  console.log(data)
-    )
-}
-function priceAndIdItem(data){
-    data.forEach((item) =>{
-        const {_id, price} = item
-        // console.log(_id, price)
 
-        comparedId(item)
+function callPriceAndId() {
+    articleArray.forEach((product) => {
+        fetch(`http://localhost:3000/api/products/${product.articleId}`)
+            .then((response) => response.json())
+            .then((data) => {
+                product.price = data.price
+                contentArticle(product);
+            });
     })
 }
-async function comparedId(item){
-    const nmbArticle = localStorage.length;
-    for(i = 0; i < nmbArticle; i++){
-        const test = Object.values(articleArray[0])
-        if(test[0] === item._id){
-            const price = item.price;
-            //  console.log(price);
-        }
-    }
-}
-//bloc article qui contient l'ensemble des items du produit dans le panier 
+
+
+//bloc article qui contient l'ensemble des items du produit dans le panier
 function contentArticle(item) {
     const section = contentSection();
     const blocArticle = buildArticle(item);
@@ -49,35 +31,36 @@ function contentArticle(item) {
     section.appendChild(blocArticle);
     blocArticle.appendChild(divImage);
     blocArticle.appendChild(blocDivDescription);
-    
+
     contentSection();
     displayTotalQuantity(item);
     displayTotalPrice(item);
 }
+
 // bloc section du document
-function contentSection(){
+function contentSection() {
     const section = document.querySelector('#cart__items');
 
     return section;
 }
+
 // Bloc article du document
-function buildArticle(item){
+function buildArticle(item) {
     const blocArticle = document.createElement('article');
 
     blocArticle.classList.add('cart__item');
     blocArticle.dataset.id = item.articleId;
     blocArticle.dataset.color = item.color;
-    // console.log("blocArticle",blocArticle);
 
     return blocArticle;
 }
-// image du produit 
-function buildImage(item){
+
+// image du produit
+function buildImage(item) {
     const divImage = document.createElement('div');
     const image = document.createElement('img');
 
     divImage.classList.add('cart__item__img');
-
     image.src = item.imageUrl;
     image.alt = item.altTxt;
 
@@ -85,8 +68,9 @@ function buildImage(item){
 
     return divImage;
 }
+
 // description du produit, regroupe fonctions buildItemDescription && buildBlocQuantity
-function buildDescription(item){
+function buildDescription(item) {
     const blocDivDescription = document.createElement('div');
     const divDescription = buildItemDescription(item);
     const blocSetting = buildBlocQuantity(item);
@@ -97,12 +81,13 @@ function buildDescription(item){
 
     return blocDivDescription;
 }
-//descriptif nom, couleur et prix de l'article 
-function buildItemDescription(item){
-    const divDescription = document.createElement ('div');
-    const title = document.createElement ('h2');
-    const colorChoice = document.createElement ('p');
-    const price = document.createElement ('p');
+
+//descriptif nom, couleur et prix de l'article
+function buildItemDescription(item) {
+    const divDescription = document.createElement('div');
+    const title = document.createElement('h2');
+    const colorChoice = document.createElement('p');
+    const price = document.createElement('p');
 
     divDescription.classList.add('cart__item__content__description');
 
@@ -115,12 +100,13 @@ function buildItemDescription(item){
     divDescription.appendChild(price);
     return divDescription;
 }
-// quantite d'article & input 
-function buildBlocQuantity(item){
+
+// quantite d'article & input
+function buildBlocQuantity(item) {
     const blocSetting = document.createElement('div');
     const divQuantity = document.createElement('div');
     const p = document.createElement('p');
-    const inputQuantite = document.createElement('input'); 
+    const inputQuantite = document.createElement('input');
     const divdeleteItem = buildDeleteItem(item);
 
     blocSetting.classList.add('cart__item__content__settings');
@@ -131,9 +117,9 @@ function buildBlocQuantity(item){
     inputQuantite.min = "1";
     inputQuantite.max = "100";
     inputQuantite.value = item.quantity;
-    inputQuantite.addEventListener('input', () => updatePriceAndQuantity(item.articleId, inputQuantite.value,item));
+    inputQuantite.addEventListener('input', () => updatePriceAndQuantity(item.articleId, inputQuantite.value, item));
 
-    p.textContent =`Qté : `;
+    p.textContent = `Qté : `;
 
     blocSetting.appendChild(divQuantity);
     divQuantity.appendChild(p);
@@ -142,11 +128,12 @@ function buildBlocQuantity(item){
 
     return blocSetting;
 }
+
 // boutton supprimer
-function buildDeleteItem(item){
-    const divdeleteItem = document.createElement ('div');
+function buildDeleteItem(item) {
+    const divdeleteItem = document.createElement('div');
     const p = document.createElement('p');
-    
+
     divdeleteItem.classList.add('cart__item__content__settings__delete');
     p.classList.add('deleteItem');
     p.textContent = "supprimer";
@@ -156,62 +143,74 @@ function buildDeleteItem(item){
 
     return divdeleteItem;
 }
+
 // cible l'article à supprimer dans localStorage
-function deleteItem(item){
+function deleteItem(item) {
     // console.log('item to delete',item);
     const itemToDelete = articleArray.findIndex((selected) => selected.articleId === item.articleId && selected.color === item.color);
     //  console.log('item to delete',itemToDelete);
-     articleArray.splice(itemToDelete, 1);
+    articleArray.splice(itemToDelete, 1);
     //  console.log(articleArray);
 
-     displayTotalQuantity();
-     displayTotalPrice();
-     deleteDataLocalStorage(item);
-     deleteArticleFromPage(item);
+    displayTotalQuantity();
+    displayTotalPrice();
+    deleteDataLocalStorage(item);
+    deleteArticleFromPage(item);
 }
+
 // fonction supprimer sur la page
-function deleteArticleFromPage(item){
+function deleteArticleFromPage(item) {
     const blocArticle = buildArticle(item);
     const articleToDelete = document.querySelector(`[data-id="${item.articleId}"][data-color="${item.color}"]`);
     // console.log('deleting article', articleToDelete);
     articleToDelete.remove(item);
 }
+
 // fonction de calcul du nombre d'article total dans le panier
-function displayTotalQuantity(){
+function displayTotalQuantity() {
     const totalQuantity = document.querySelector('#totalQuantity');
     const totalItemQuantity = articleArray.reduce((total, item) => total + item.quantity, 0);// methode reduce() renvoie la valeur cumulé dans array localStorage
-    
+
     totalQuantity.textContent = totalItemQuantity;
 }
+
 // fonction de calcul de prix total dans le panier
-function displayTotalPrice(){
+function displayTotalPrice() {
     const totalPrice = document.querySelector('#totalPrice');
     let total = 0;
-    articleArray.forEach(item =>{
+    articleArray.forEach(item => {
         const totalItem = item.price * item.quantity;
         total += totalItem;
     })
     // console.log(total);
     totalPrice.textContent = total;
 }
+
 // function changement on click quantité dans le panier
-function updatePriceAndQuantity(articleId, newQuantiteValue, item){//retourne une nouvelle quantité en passant par array localStorage
+function updatePriceAndQuantity(articleId, newQuantiteValue, item) {//retourne une nouvelle quantité en passant par array localStorage
     const newTotalQuantity = articleArray.find((item) => item.articleId === articleId);// methode find() renvoie la valeur du premier élément
     newTotalQuantity.quantity = Number(newQuantiteValue);
     item.quantity = newTotalQuantity.quantity;
 
     displayTotalQuantity();
     displayTotalPrice();
-    deleteDataLocalStorage(item);
+    updateProductInLocalStorage(item);
 }
+
+function updateProductInLocalStorage(item) {
+    const key = `${item.articleId}-${item.color}`;
+    localStorage.setItem(key, JSON.stringify(item));
+}
+
 // fonction supprimer dans localStorage
-function deleteDataLocalStorage(item){
+function deleteDataLocalStorage(item) {
     const key = `${item.articleId}-${item.color}`;
     // console.log('on retire cette key',key);
     localStorage.removeItem(key);
 }
+
 // fonction enregistre les nouvelles quantitées quand EventListener 'click' execute la fonction updatePriceAndQuantity(item.articleId, inputQuantite.value))
-function saveNewDataLocalStorage(item){
+function saveNewDataLocalStorage(item) {
     const newData = JSON.stringify(item);
     const key = `${item.articleId}-${item.color}`;
     localStorage.setItem(key, newData);
@@ -219,13 +218,14 @@ function saveNewDataLocalStorage(item){
 }
 
 // FORMULAIRE
-function selectedSubmitForm(){
+function selectedSubmitForm() {
     const orderButton = document.querySelector('#order');
-    orderButton.addEventListener('click',(e) => submitForm(e));
+    orderButton.addEventListener('click', (e) => submitForm(e));
 }
-function submitForm(e){
+
+function submitForm(e) {
     e.preventDefault();
-    if(articleArray.length === 0){
+    if (articleArray.length === 0) {
         alert('S\'il vous plaît choisissez un article')
     }
     const form = document.querySelector('.cart__order__form');
@@ -234,32 +234,33 @@ function submitForm(e){
         method: "POST",
         body: JSON.stringify(body),
         headers: {
-            "Content-Type" : "application/json",
+            "Content-Type": "application/json",
         }
     })
-    .then((response) => response.json())
-    .then((res) => console.log(res))
+        .then((response) => response.json())
+        .then((res) => console.log(res))
     //  console.log(form.elements);
 }
-function buildRequestBody(){
+
+function buildRequestBody() {
     const form = document.querySelector('.cart__order__form');
     const firstName = form.elements.firstName.value;
     const lastName = form.elements.lastName.value;
     const address = form.elements.address.value;
     const city = form.elements.city.value;
     const email = form.elements.email.value;
-  const body = {
-    contact: {
-        firstName: firstName,
-        lastName: lastName,
-        address: address,
-        city: city,
-        email: email
-    },
-    products: ["107fb5b75607497b96722bda5b504926"] ,
+    const body = {
+        contact: {
+            firstName: firstName,
+            lastName: lastName,
+            address: address,
+            city: city,
+            email: email
+        },
+        products: ["107fb5b75607497b96722bda5b504926"],
+    }
+    return body;
 }
- return body;
-}
+localStorageArticle();
 callPriceAndId();
-comparedId(articleArray);
 selectedSubmitForm();
