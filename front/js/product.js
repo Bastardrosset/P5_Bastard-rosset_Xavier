@@ -57,8 +57,8 @@ function attachColors(){
         })
     }
 }
-function addEventListenerToaddToCart(){
-    var button = document.getElementById('addToCart');// attribut une variable button a l'élément button
+function addEventListenerToAddToCart(){
+    const button = document.getElementById('addToCart');// attribut une variable button a l'élément button
 if(button != null){
     button.addEventListener('click', addToCart);
     }
@@ -81,7 +81,8 @@ function saveCart(selectedColor,selectedQuantity){
         altTxt : kanap.altTxt,
         name : kanap.name
     }
-     localStorage.setItem(key, JSON.stringify(data));// store les valeurs enregistrés dans l'objet data et les sérialises en format json 
+     localStorage.setItem(key, JSON.stringify(data));
+     // store les valeurs enregistrés dans l'objet data et les sérialises en format json 
 }
 function choiceSelection(selectedColor,selectedQuantity){
     if(selectedColor == null || selectedQuantity == null || selectedColor === '' || selectedQuantity == 0){
@@ -93,4 +94,4 @@ function redirectCart(){
     window.location.href = "cart.html";
 }
 showProduct();
-addEventListenerToaddToCart();
+addEventListenerToAddToCart();
