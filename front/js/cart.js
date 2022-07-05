@@ -205,7 +205,7 @@ function deleteItem(item) {
      deleteArticleFromPage(item);
 }
 // fonction supprimer sur la page
-function deleteArticleFromPage(item) {
+function deleteArticleFromPage(item) { 
     const articleToDelete = document.querySelector(`[data-id="${item.articleId}"][data-color="${item.color}"]`);
     // console.log('deleting article', articleToDelete);
     articleToDelete.remove();
@@ -218,21 +218,22 @@ function deleteDataLocalStorage(item) {
 }
 
 // FORMULAIRE
-function selectedSubmitForm(){
-    const orderButton = document.querySelector('#order');
+function selectedSubmitForm() {
+    const orderButton = document.getElementById('order');
     orderButton.addEventListener('click',(e) => submitForm(e));
 }
-function submitForm(e){
+function submitForm(e) {
     e.preventDefault();
     if(localStorage.length === 0){
-        alert('S\'il vous plaît choisissez un article')
+        alert("S'il vous plaît choisissez un article")
         return
     }
-    if (ifFormInvalid()){
-        return
-    }
-
-    const form = document.querySelector('.cart__order__form');
+    if (ifFormInvalid()) return
+    if(isEmailInvalid()) return
+    if(firstNameInvalid()) return
+    if(lastNameInvalid()) return
+    if(adressInvalid()) return
+    if(cityInvalid()) return
     const body = buildRequestBody();
     fetch("http://localhost:3000/api/products/order", {
         method: "POST",
@@ -245,7 +246,68 @@ function submitForm(e){
     .then((res) => console.log(res))
     //   console.log(form.elements);
 }
-function buildRequestBody(){
+function cityInvalid(){
+    const city = document.querySelector('#city').value;
+    const errorCity = document.querySelector('#cityErrorMsg');
+    const regex = /^[a-zA-Z]+$/;
+    if(regex.test(city) === false){
+        errorCity.textContent = 'Les caractères spéciaux et chiffres ne sont pas tolérés'
+        return true;
+    }
+    return false;
+}
+function adressInvalid() {
+    const address = document.querySelector('#address').value;
+    const errorAddress = document.querySelector('#addressErrorMsg');
+    const regex = /^[a-zA-Z0-9 ]+$/;
+    if(regex.test(address) === false){
+        errorAddress.textContent = 'Les caractères spéciaux ne sont pas tolérés'
+        return true;
+    }
+    return false;
+}
+function lastNameInvalid() {
+    const lastName = document.querySelector('#lastName').value;
+    const errorLastName = document.querySelector('#lastNameErrorMsg')
+    const regex = /^[a-zA-Z-]+$/;
+    if(regex.test(lastName) === false){
+        errorLastName.textContent = 'Veuillez écrire votre nom correctement'
+        return true;
+    }
+    return false;
+}
+function firstNameInvalid() {
+    const firstName = document.querySelector('#firstName').value;
+    const errorFirstName = document.querySelector('#firstNameErrorMsg')
+    const regex = /^[a-zA-Z]+$/;
+    if(regex.test(firstName) === false){
+        errorFirstName.textContent = 'Veuillez écrire votre prénom correctement'
+        return true;
+    }
+    return false;
+}
+function isEmailInvalid() {
+    const email= document.querySelector('#email').value;
+    const errorEmail = document.querySelector('#emailErrorMsg');
+    const regex = /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$/;
+    if(regex.test(email) === false){
+        errorEmail.textContent = "Vueillez enregistrer un email valide"
+        return true;
+    }
+    return false;
+}
+function ifFormInvalid() {
+    const form = document.getElementsByClassName('cart__order__form');
+    const inputs = document.querySelectorAll('input');
+        inputs.forEach((input) => {
+            if (input.value === "") {
+                alert("Veuillez remplir tous les champs")
+                return true;
+            }
+            return false;
+        })
+}
+function buildRequestBody() {
     const form = document.querySelector('.cart__order__form');
     const firstName = form.elements.firstName.value;
     const lastName = form.elements.lastName.value;
@@ -265,7 +327,7 @@ function buildRequestBody(){
 // console.log(body);
  return body;
 }
-function getIdsFromLocalStorage(){
+function getIdsFromLocalStorage() {
     const numberOfProduct = localStorage.length;
     const ids = [];
         for (let i = 0; i < numberOfProduct; i++){
@@ -276,17 +338,6 @@ function getIdsFromLocalStorage(){
             // console.log(ids);
         }
         return ids;
-}
-function ifFormInvalid(){
-    const form = document.querySelector('.cart__order__form');
-    const inputs = document.querySelectorAll('input');
-        inputs.forEach((input) =>{
-            if (input.value === ""){
-                alert("Veuillez remplir tous les champs")
-                return true;
-            }
-            return false;
-        })
 }
 localStorageArticle();
 callPriceAndId();
