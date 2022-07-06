@@ -2,10 +2,10 @@ const articleArray = [];
 articleArray.forEach((item) => contentArticle(item));
 // console.log(articleArray);
 function localStorageArticle() {
-    const nmbArticle = sessionStorage.length;
+    const nmbArticle = localStorage.length;
     // console.log("vous avez ajouter : ", nmbArticle);
     for(let i = 0; i < nmbArticle; i++){
-        const item = sessionStorage.getItem(sessionStorage.key(i));
+        const item = localStorage.getItem(localStorage.key(i));
         // console.log("objet a la position ", i, `est l'`, article)
             if(isJson(item)){ 
                 const articleObjet = JSON.parse(item);
@@ -139,9 +139,8 @@ function buildBlocQuantity(item) {
 function updatePriceAndQuantity(articleId, newQuantiteValue, item) {//retourne une nouvelle quantité en passant par array localStorage
     const newTotalQuantity = articleArray.find((item) => item.articleId === articleId);// methode find() renvoie la valeur du premier élément
     newTotalQuantity.quantity = Number(newQuantiteValue);
-    item.quantity = newTotalQuantity.quantity;
+    item.quantity.value = newTotalQuantity.quantity;
     // console.log("newTotalQuantity",newTotalQuantity);
-    // console.log(articleArray);
 
     displayTotalQuantity();
     displayTotalPrice();
@@ -152,12 +151,12 @@ function updatePriceAndQuantity(articleId, newQuantiteValue, item) {//retourne u
 function saveNewDataLocalStorage(item) {
     const newDataToSave = JSON.stringify(item);
     const key = `${item.articleId}-${item.color}`;
-    sessionStorage.setItem(key, newDataToSave);
+    localStorage.setItem(key, newDataToSave);
     // console.log('newData', newData);
 }
 function updateProductLocalStorage(item) {
     const key = `${item.articleId}-${item.color}`;
-    sessionStorage.setItem(key, JSON.stringify(item));
+    localStorage.setItem(key, JSON.stringify(item));
 }
 // fonction de calcul du nombre d'article total dans le panier
 function displayTotalQuantity() {
@@ -214,17 +213,19 @@ function deleteArticleFromPage(item) {
 function deleteDataLocalStorage(item) {
     const key = `${item.articleId}-${item.color}`;
     // console.log('on retire cette key',key);
-    sessionStorage.removeItem(key);
+    localStorage.removeItem(key);
 }
 
 // FORMULAIRE
+// selectionne le boutton commander du formulaire
 function selectedSubmitForm() {
     const orderButton = document.getElementById('order');
     orderButton.addEventListener('click',(e) => submitForm(e));
 }
+// Gestion formulaire, conditions de validité && si valide renvoie les données
 function submitForm(e) {
     e.preventDefault();
-    if(sessionStorage.length === 0){
+    if(localStorage.length === 0){
         alert("S'il vous plaît choisissez un article")
         return
     }
@@ -251,6 +252,7 @@ function submitForm(e) {
     .catch((error) => console.error(error))
     // console.log(form.elements);
 }
+// constructeur clé body, information enregistrés par le client
 function buildRequestBody() {
     const form = document.querySelector('.cart__order__form');
     const firstName = form.elements.firstName.value;
@@ -271,11 +273,12 @@ function buildRequestBody() {
 // console.log(body);
  return body;
 }
+// constructeur clé products, ID article séléctionné par le client
 function getIdsFromLocalStorage() {
-    const numberOfProduct = sessionStorage.length;
+    const numberOfProduct = localStorage.length;
     const ids = [];
         for (let i = 0; i < numberOfProduct; i++){
-            const key = sessionStorage.key(i);
+            const key = localStorage.key(i);
             // console.log('key as', key);
             const id = key.split('-')[0];
             ids.push(id);
@@ -283,6 +286,7 @@ function getIdsFromLocalStorage() {
         }
         return ids;
 }
+// vérifie le validitée de l'input city
 function isCityInvalid(){
     const city = document.querySelector('#city').value;
     const errorCity = document.querySelector('#cityErrorMsg');
@@ -293,6 +297,7 @@ function isCityInvalid(){
     }
     return false;
 }
+// vérifie le validitée de l'input adress
 function isAdressInvalid() {
     const address = document.querySelector('#address').value;
     const errorAddress = document.querySelector('#addressErrorMsg');
@@ -303,6 +308,7 @@ function isAdressInvalid() {
     }
     return false;
 }
+// vérifie le validitée de l'input lastName
 function isLastNameInvalid() {
     const lastName = document.querySelector('#lastName').value;
     const errorLastName = document.querySelector('#lastNameErrorMsg')
@@ -313,6 +319,7 @@ function isLastNameInvalid() {
     }
     return false;
 }
+// vérifie le validitée de l'input firstName
 function isFirstNameInvalid() {
     const firstName = document.querySelector('#firstName').value;
     const errorFirstName = document.querySelector('#firstNameErrorMsg')
@@ -323,16 +330,18 @@ function isFirstNameInvalid() {
     }
     return false;
 }
+// vérifie le validitée de l'input email
 function isEmailInvalid() {
     const email= document.querySelector('#email').value;
     const errorEmail = document.querySelector('#emailErrorMsg');
     const regex = /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$/;
     if(regex.test(email) === false){
-        errorEmail.textContent = "Vueillez enregistrer un email valide"
+        errorEmail.textContent = "Veuillez enregistrer un email valide"
         return true;
     }
-    return false;
+        return false;
 }
+// verifie qu'il n'y est pas d'input vide
 function ifFormInvalid() {
     const form = document.getElementsByClassName('cart__order__form');
     const inputs = document.querySelectorAll('input');

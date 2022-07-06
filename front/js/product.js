@@ -1,7 +1,6 @@
 const url_string = window.location.search; 
 const url = new URLSearchParams(url_string);
 const articleId = url.get('id');
-let kanap = null;
 
 function showProduct(){
     fetch (`http://localhost:3000/api/products/${articleId}`)// appel les items en fonction de leur id
@@ -57,12 +56,14 @@ function attachColors(){
         })
     }
 }
+// fonction ajouter au panier
 function addEventListenerToAddToCart(){
     const button = document.getElementById('addToCart');// attribut une variable button a l'élément button
 if(button != null){
     button.addEventListener('click', addToCart);
     }
 }
+// attribue les valeurs a verifier
 function addToCart(){
     const selectedColor = document.getElementById('colors').value;
     const selectedQuantity = document.getElementById('quantity').value;
@@ -71,6 +72,7 @@ function addToCart(){
     saveCart(selectedColor, selectedQuantity);
     redirectCart();
 }
+// enregistre les données et store vers localStorage
 function saveCart(selectedColor,selectedQuantity){
     const key = `${articleId}-${selectedColor}`;
     const data = {// objet auquel on attribut les valeurs a enregistrer afin de les communiquer a la page cart.js
@@ -81,15 +83,17 @@ function saveCart(selectedColor,selectedQuantity){
         altTxt : kanap.altTxt,
         name : kanap.name
     }
-     sessionStorage.setItem(key, JSON.stringify(data));
+     localStorage.setItem(key, JSON.stringify(data));
      // store les valeurs enregistrés dans l'objet data et les sérialises en format json 
 }
+// verifie les valeurs couleur et quantité 
 function choiceSelection(selectedColor,selectedQuantity){
     if(selectedColor == null || selectedQuantity == null || selectedColor === '' || selectedQuantity == 0){
         alert("Veuillez choisir une couleur et une quantitée !")// si les choix n'ont pas de valeur, message alert s'execute
         return true;// empeche d'aller plus loin si les conditions non remplis
     }
 }
+// redirige vers panier
 function redirectCart(){
     window.location.href = "cart.html";
 }

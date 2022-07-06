@@ -6,9 +6,10 @@ fetch("http://localhost:3000/api/products")// appel a l'API
           
         }
     )
+// gere l'assemblage de la sémantique de la page
 function addProducts(data){
     data.forEach((kanap) =>{
-    const {_id, imageUrl, altTxt, name, description} = kanap
+    const {_id, imageUrl, altTxt, name, description} = kanap// recupere les string de l'api
     const image = buildImage(imageUrl, altTxt);// appel la fonction buildImage
     const anchor= makeAnchor(_id); // appel fonction makeAnchor avec imageUrl, resultat est passé a anchor
     const article = document.createElement('article');// creation de l'élément article
@@ -23,7 +24,7 @@ function addProducts(data){
 }
 function makeAnchor(id){// creation du lien vers l'article
     const anchor = document.createElement('a');
-    anchor.href = `./product.html?id=${id}`;
+    anchor.href = `./product.html?id=${id}`;// redirige vers la page de l'article
     return anchor;
 }
 function linkItems(anchor, article){// selection de l'élément auquel on ajoute le l'élément lien et l'élément article
@@ -33,21 +34,24 @@ function linkItems(anchor, article){// selection de l'élément auquel on ajoute
     anchor.append(article);// ajout dans anchor l'élément article
     }
 }
-function buildImage(imageUrl, altTxt){// creation du bloc image
+// creation du bloc image
+function buildImage(imageUrl, altTxt){
     const image = document.createElement('img');
     image.src = imageUrl;
     image.alt = altTxt;
 
     return image;
 }
-function buildH3(name){// creation du titre de l'article
+// creation du titre de l'article
+function buildH3(name){
     const titleArticle = document.createElement('h3');
     titleArticle.textContent = name;
     titleArticle.classList.add('productName');
 
     return titleArticle;
 }
-function txtArticle(description){// creation du descriptif de l'article
+// creation du descriptif de l'article
+function txtArticle(description){
     const textArticle = document.createElement('p');
     textArticle.textContent = description;
     textArticle.classList.add('productDescription');
