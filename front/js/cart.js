@@ -2,10 +2,10 @@ const articleArray = [];
 articleArray.forEach((item) => contentArticle(item));
 // console.log(articleArray);
 function localStorageArticle() {
-    const nmbArticle = localStorage.length;
+    const nmbArticle = sessionStorage.length;
     // console.log("vous avez ajouter : ", nmbArticle);
     for(let i = 0; i < nmbArticle; i++){
-        const item = localStorage.getItem(localStorage.key(i));
+        const item = sessionStorage.getItem(sessionStorage.key(i));
         // console.log("objet a la position ", i, `est l'`, article)
             if(isJson(item)){ 
                 const articleObjet = JSON.parse(item);
@@ -152,12 +152,12 @@ function updatePriceAndQuantity(articleId, newQuantiteValue, item) {//retourne u
 function saveNewDataLocalStorage(item) {
     const newDataToSave = JSON.stringify(item);
     const key = `${item.articleId}-${item.color}`;
-    localStorage.setItem(key, newDataToSave);
+    sessionStorage.setItem(key, newDataToSave);
     // console.log('newData', newData);
 }
 function updateProductLocalStorage(item) {
     const key = `${item.articleId}-${item.color}`;
-    localStorage.setItem(key, JSON.stringify(item));
+    sessionStorage.setItem(key, JSON.stringify(item));
 }
 // fonction de calcul du nombre d'article total dans le panier
 function displayTotalQuantity() {
@@ -214,7 +214,7 @@ function deleteArticleFromPage(item) {
 function deleteDataLocalStorage(item) {
     const key = `${item.articleId}-${item.color}`;
     // console.log('on retire cette key',key);
-    localStorage.removeItem(key);
+    sessionStorage.removeItem(key);
 }
 
 // FORMULAIRE
@@ -224,16 +224,16 @@ function selectedSubmitForm() {
 }
 function submitForm(e) {
     e.preventDefault();
-    if(localStorage.length === 0){
+    if(sessionStorage.length === 0){
         alert("S'il vous plaît choisissez un article")
         return
     }
     if (ifFormInvalid()) return
     if(isEmailInvalid()) return
-    if(firstNameInvalid()) return
-    if(lastNameInvalid()) return
-    if(adressInvalid()) return
-    if(cityInvalid()) return
+    if(isFirstNameInvalid()) return
+    if(isLastNameInvalid()) return
+    if(isAdressInvalid()) return
+    if(isCityInvalid()) return
     const body = buildRequestBody();
     fetch("http://localhost:3000/api/products/order", {
         method: "POST",
@@ -243,20 +243,57 @@ function submitForm(e) {
         }
     })
     .then((response) => response.json())
-    .then((res) => console.log(res))
-    //   console.log(form.elements);
+    .then((data) => {
+        const orderId = data.orderId;
+        window.location.href ='../html/confirmation.html' + '?orderId=' + orderId;
+        // console.log('data as', data);// orderId
+    })
+    .catch((error) => console.error(error))
+    // console.log(form.elements);
 }
-function cityInvalid(){
+function buildRequestBody() {
+    const form = document.querySelector('.cart__order__form');
+    const firstName = form.elements.firstName.value;
+    const lastName = form.elements.lastName.value;
+    const address = form.elements.address.value;
+    const city = form.elements.city.value;
+    const email = form.elements.email.value;
+  const body = {
+    contact: {
+        firstName: firstName,
+        lastName: lastName,
+        address: address,
+        city: city,
+        email: email
+    },
+    products: getIdsFromLocalStorage(),
+}
+// console.log(body);
+ return body;
+}
+function getIdsFromLocalStorage() {
+    const numberOfProduct = sessionStorage.length;
+    const ids = [];
+        for (let i = 0; i < numberOfProduct; i++){
+            const key = sessionStorage.key(i);
+            // console.log('key as', key);
+            const id = key.split('-')[0];
+            ids.push(id);
+            // console.log('ids as', ids);
+        }
+        return ids;
+}
+function isCityInvalid(){
     const city = document.querySelector('#city').value;
     const errorCity = document.querySelector('#cityErrorMsg');
-    const regex = /^[a-zA-Z]+$/;
+    const regex = /^[a-zA-Z0-9 ]+$/;
     if(regex.test(city) === false){
         errorCity.textContent = 'Les caractères spéciaux et chiffres ne sont pas tolérés'
         return true;
     }
     return false;
 }
-function adressInvalid() {
+function isAdressInvalid() {
     const address = document.querySelector('#address').value;
     const errorAddress = document.querySelector('#addressErrorMsg');
     const regex = /^[a-zA-Z0-9 ]+$/;
@@ -266,7 +303,7 @@ function adressInvalid() {
     }
     return false;
 }
-function lastNameInvalid() {
+function isLastNameInvalid() {
     const lastName = document.querySelector('#lastName').value;
     const errorLastName = document.querySelector('#lastNameErrorMsg')
     const regex = /^[a-zA-Z-]+$/;
@@ -276,7 +313,7 @@ function lastNameInvalid() {
     }
     return false;
 }
-function firstNameInvalid() {
+function isFirstNameInvalid() {
     const firstName = document.querySelector('#firstName').value;
     const errorFirstName = document.querySelector('#firstNameErrorMsg')
     const regex = /^[a-zA-Z]+$/;
@@ -306,38 +343,6 @@ function ifFormInvalid() {
             }
             return false;
         })
-}
-function buildRequestBody() {
-    const form = document.querySelector('.cart__order__form');
-    const firstName = form.elements.firstName.value;
-    const lastName = form.elements.lastName.value;
-    const address = form.elements.address.value;
-    const city = form.elements.city.value;
-    const email = form.elements.email.value;
-  const body = {
-    contact: {
-        firstName: firstName,
-        lastName: lastName,
-        address: address,
-        city: city,
-        email: email
-    },
-    products: getIdsFromLocalStorage(),
-}
-// console.log(body);
- return body;
-}
-function getIdsFromLocalStorage() {
-    const numberOfProduct = localStorage.length;
-    const ids = [];
-        for (let i = 0; i < numberOfProduct; i++){
-            const key = localStorage.key(i);
-            // console.log(key);
-            const id = key.split('-')[0];
-            ids.push(id);
-            // console.log(ids);
-        }
-        return ids;
 }
 localStorageArticle();
 callPriceAndId();

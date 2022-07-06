@@ -81,7 +81,7 @@ function saveCart(selectedColor,selectedQuantity){
         altTxt : kanap.altTxt,
         name : kanap.name
     }
-     localStorage.setItem(key, JSON.stringify(data));
+     sessionStorage.setItem(key, JSON.stringify(data));
      // store les valeurs enregistrés dans l'objet data et les sérialises en format json 
 }
 function choiceSelection(selectedColor,selectedQuantity){
