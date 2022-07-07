@@ -12,7 +12,7 @@ function localStorageArticle() {
       const articleObjet = JSON.parse(item);
       articleArray.push(articleObjet);
     }
-    console.log(articleArray);
+    // console.log(articleArray);
   }
 }
 // verifie si les données sont convertis en JS
@@ -145,7 +145,7 @@ function updatePriceAndQuantity(articleId, newQuantiteValue, color) {
     (item) => item.articleId === articleId && item.color === color
   ); // methode find() renvoie la valeur du premier élément
   newItem.quantity = Number(newQuantiteValue);
-  console.log("newTotalQuantity", newItem);
+//   console.log("newTotalQuantity", newItem);
 
   displayTotalQuantity();
   displayTotalPrice();
@@ -174,7 +174,6 @@ function displayTotalPrice() {
   // console.log(total);
 }
 // fonction enregistre les nouvelles quantitées quand EventListener 'click' execute la fonction updatePriceAndQuantity(item.articleId, inputQuantite.value))
-
 function updateProductLocalStorage(item) {
   const key = `${item.articleId}-${item.color}`;
   localStorage.setItem(key, JSON.stringify(item));
