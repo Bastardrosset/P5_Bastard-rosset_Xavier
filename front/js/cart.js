@@ -35,7 +35,7 @@ function callPriceAndId() {
       });
   });
 }
-//bloc article qui contient l'ensemble des items du produit dans le panier
+// bloc article qui contient l'ensemble des items du produit dans le panier
 function contentArticle(item) {
   const section = contentSection();
   const blocArticle = buildArticle(item);
@@ -235,12 +235,12 @@ function submitForm(e) {
     alert("S'il vous plaît choisissez un article");
     return;
   }
-  if (ifFormInvalid()) return;
-  if (isEmailInvalid()) return;
-  if (isFirstNameInvalid()) return;
-  if (isLastNameInvalid()) return;
-  if (isAdressInvalid()) return;
-  if (isCityInvalid()) return;
+  // if (ifFormInvalid()) return;
+  // if (isEmailInvalid()) return;
+  // if (isFirstNameInvalid()) return;
+  // if (isLastNameInvalid()) return;
+  // if (isAdressInvalid()) return;
+  // if (isCityInvalid()) return;
   const body = buildRequestBody();
   fetch("http://localhost:3000/api/products/order", {
     method: "POST",
@@ -295,48 +295,69 @@ function getIdsFromLocalStorage() {
 }
 // vérifie le validitée de l'input city
 function isCityInvalid() {
-  const city = document.querySelector("#city").value;
+  const city = document.querySelector("#city");
   const errorCity = document.querySelector("#cityErrorMsg");
-  const regex = /^[a-zA-Z0-9 ]+$/;
-  if (regex.test(city) === false) {
-    errorCity.textContent =
-      "Les caractères spéciaux et chiffres ne sont pas tolérés";
-    return true;
+  city.addEventListener('change', (e) => validCity(this))
+    function validCity(){
+      const regex = /^[a-zA-Z0-9 ]+$/;
+      let testCity = regex.test(city.value);
+        if(testCity) {
+          errorCity.textContent = 'Ville valide';
+          errorCity.style.color = 'green';
+        }else {
+          errorCity.textContent = "Les caractères spéciaux et chiffres ne sont pas tolérés";
+          errorCity.style.color = "#fbbcbc"
+        }
   }
-  return false;
+  
 }
-// vérifie le validitée de l'input adress
+// vérifie le validitée de l'input address
 function isAdressInvalid() {
   const address = document.querySelector("#address").value;
   const errorAddress = document.querySelector("#addressErrorMsg");
-  const regex = /^[a-zA-Z0-9 ]+$/;
-  if (regex.test(address) === false) {
-    errorAddress.textContent = "Les caractères spéciaux ne sont pas tolérés";
-    return true;
+  address.addEventListener('change', (e) => validAddress(this))
+    function validAddress(){
+      const regex = /^[a-zA-Z0-9 ]+$/;
+      let testAddress = regex.test(address.value);
+        if(testAddress){
+          errorAddress.textContent = 'Adrresse valide';
+          errorAddress.style.color = 'green';
+        }else {
+          errorAddress.textContent = "Les caractères spéciaux ne sont pas tolérés";
+          errorAddress.style.color = '#fbbcbc';
+        }
   }
-  return false;
 }
 // vérifie le validitée de l'input lastName
 function isLastNameInvalid() {
   const lastName = document.querySelector("#lastName").value;
   const errorLastName = document.querySelector("#lastNameErrorMsg");
-  const regex = /^[a-zA-Z-]+$/;
-  if (regex.test(lastName) === false) {
-    errorLastName.textContent = "Veuillez écrire votre nom correctement";
-    return true;
-  }
-  return false;
+  lastName.addEventListener('change', (e) => validLastName(this));
+    function validLastName(){
+      const regex = /^[a-zA-Z-]+$/;
+      let testLastName = regex.test(lastName.value);
+        if(testLastName){
+          errorLastName.textContent = 'Format prénom valide';
+          errorLastName.style.color = 'green';
+        }else {
+          errorLastName.textContent = "Veuillez écrire votre nom correctement";
+        }
+    }
 }
 // vérifie le validitée de l'input firstName
 function isFirstNameInvalid() {
   const firstName = document.querySelector("#firstName").value;
   const errorFirstName = document.querySelector("#firstNameErrorMsg");
-  const regex = /^[a-zA-Z]+$/;
+  const regex = /^[a-zA-Z]$/;
   if (regex.test(firstName) === false) {
     errorFirstName.textContent = "Veuillez écrire votre prénom correctement";
     return true;
+  } else {
+    firstName.match(regex)
+    errorFirstName.remove();
   }
   return false;
+  
 }
 // vérifie le validitée de l'input email
 function isEmailInvalid() {
@@ -367,3 +388,4 @@ callPriceAndId();
 selectedSubmitForm();
 buildRequestBody();
 getIdsFromLocalStorage();
+isCityInvalid();

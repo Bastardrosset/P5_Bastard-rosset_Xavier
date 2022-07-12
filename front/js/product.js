@@ -2,11 +2,14 @@ const url_string = window.location.search;
 const url = new URLSearchParams(url_string);
 const articleId = url.get('id');
 
+// appel a l'API en fonction de l'ID de l'article
 function showProduct(){
     fetch (`http://localhost:3000/api/products/${articleId}`)// appel les items en fonction de leur id
     .then((response) => response.json())
     .then((res) => detailsArticle(res))
 }
+
+// fonction qui regroupe les fonctionnalitées avec clé .kanap
 function detailsArticle(_kanap){
     kanap = _kanap;
     // console.log(_kanap);
@@ -16,6 +19,8 @@ function detailsArticle(_kanap){
     attachDescription();
     attachColors();
 }
+
+// fonction cible l'élément qui contient l'image et attribut l'image
 function attachImage(){
     const image = document.createElement('img');// creation de l'élément img
     image.src = kanap.imageUrl;// attribut l'image de l'article
@@ -26,24 +31,32 @@ function attachImage(){
         blocImg.appendChild(image);
     }
 }
+
+// fonction qui cible l'élément qui contient le nom de l'article et attribut le titre
 function attachTitle(){
     const title = document.getElementById('title');
     if(title != null){
         title.textContent = kanap.name;
     }
 }
+
+// fonction qui cible l'élément qui contient le prix et attribut le prix
 function attachPrice(){
     const span = document.getElementById('price');
     if (span != null){
         span.textContent = kanap.price;
     }
 }
+
+// fonction qui cible l'élément de description et attribut la description de l'article
 function attachDescription(){
     const p = document.getElementById('description');
     if (p != null){
         p.textContent = kanap.description;
     }
 }
+
+// fonction qui cible l'élément color de l'article et attribut la valeur séléctionner pour l'article
 function attachColors(){
     const select = document.getElementById('colors');// selection de élément auquel on attribut option value
     
@@ -56,6 +69,7 @@ function attachColors(){
         })
     }
 }
+
 // fonction ajouter au panier
 function addEventListenerToAddToCart(){
     const button = document.getElementById('addToCart');// attribut une variable button a l'élément button
@@ -63,7 +77,8 @@ if(button != null){
     button.addEventListener('click', addToCart);
     }
 }
-// attribue les valeurs a verifier
+
+// attribue les valeurs a verifier avant ajout au panier
 function addToCart(){
     const selectedColor = document.getElementById('colors').value;
     const selectedQuantity = document.getElementById('quantity').value;
@@ -72,6 +87,7 @@ function addToCart(){
     saveCart(selectedColor, selectedQuantity);
     redirectCart();
 }
+
 // enregistre les données et store vers localStorage
 function saveCart(selectedColor,selectedQuantity){
     const key = `${articleId}-${selectedColor}`;
@@ -83,8 +99,13 @@ function saveCart(selectedColor,selectedQuantity){
         altTxt : kanap.altTxt,
         name : kanap.name
     }
+    // for(let i = 0; i < localStorage.length; i++){
+    //     const itemCache = localStorage.find(
+    //     (item) => item.articleId === itemPlus);
+    // }
      localStorage.setItem(key, JSON.stringify(data));
      // store les valeurs enregistrés dans l'objet data et les sérialises en format json 
+     
 }
 // verifie les valeurs couleur et quantité 
 function choiceSelection(selectedColor,selectedQuantity){
@@ -93,9 +114,12 @@ function choiceSelection(selectedColor,selectedQuantity){
         return true;// empeche d'aller plus loin si les conditions non remplis
     }
 }
+
 // redirige vers panier
 function redirectCart(){
     window.location.href = "cart.html";
 }
+
+
 showProduct();
 addEventListenerToAddToCart();

@@ -6,6 +6,7 @@ fetch("http://localhost:3000/api/products")// appel a l'API
           
         }
     )
+
 // gere l'assemblage de la sémantique de la page
 function addProducts(data){
     data.forEach((kanap) =>{
@@ -22,18 +23,23 @@ function addProducts(data){
     linkItems(anchor, article);// passe le resultat du lien anchor a fonction linkItems
     })
 }
-function makeAnchor(id){// creation du lien vers l'article
+
+// creation du lien vers l'article
+function makeAnchor(id){
     const anchor = document.createElement('a');
     anchor.href = `./product.html?id=${id}`;// redirige vers la page de l'article
     return anchor;
 }
-function linkItems(anchor, article){// selection de l'élément auquel on ajoute le l'élément lien et l'élément article
+
+// selection de l'élément auquel on ajoute le l'élément lien et l'élément article
+function linkItems(anchor, article){
     const items = document.getElementById("items");
     if (items != null){// si items est trouvé
     items.appendChild(anchor);// on lui ajoute le lien anchor
     anchor.append(article);// ajout dans anchor l'élément article
     }
 }
+
 // creation du bloc image
 function buildImage(imageUrl, altTxt){
     const image = document.createElement('img');
@@ -42,6 +48,7 @@ function buildImage(imageUrl, altTxt){
 
     return image;
 }
+
 // creation du titre de l'article
 function buildH3(name){
     const titleArticle = document.createElement('h3');
@@ -50,6 +57,7 @@ function buildH3(name){
 
     return titleArticle;
 }
+
 // creation du descriptif de l'article
 function txtArticle(description){
     const textArticle = document.createElement('p');

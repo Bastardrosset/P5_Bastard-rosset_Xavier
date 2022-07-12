@@ -6,17 +6,21 @@ function getOrderId(){
     // console.log('orderId as', orderId);
     
 }
+
 // attribut orderId au span de confirmation
 function displayOrderId(orderId){
     const order = getOrderId(orderId);
     const orderIdElement = document.getElementById('orderId');
     orderIdElement.textContent = order;
 }
+
 // vide les infos du localStorage une fois la validation éffectué
 function removeStorage(){
     const storage = window.localStorage;
     storage.clear();
 }
+
+
 getOrderId();
 displayOrderId(orderId);
 removeStorage();
