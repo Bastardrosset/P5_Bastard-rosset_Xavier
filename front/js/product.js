@@ -99,12 +99,16 @@ function saveCart(selectedColor,selectedQuantity){
         altTxt : kanap.altTxt,
         name : kanap.name
     }
-    // for(let i = 0; i < localStorage.length; i++){
-    //     const itemCache = localStorage.find(
-    //     (item) => item.articleId === itemPlus);
-    // }
-     localStorage.setItem(key, JSON.stringify(data));
-     // store les valeurs enregistrés dans l'objet data et les sérialises en format json 
+    let item = JSON.parse(localStorage.getItem(key))
+    if (item) {
+        item.quantity++;
+        localStorage.setItem(key, JSON.stringify(item));
+    } else {
+        localStorage.setItem(key, JSON.stringify(data));
+        // store les valeurs enregistrés dans l'objet data et les sérialises en format json 
+    }
+     
+     
      
 }
 // verifie les valeurs couleur et quantité 

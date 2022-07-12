@@ -26,7 +26,9 @@ function isJson(str) {
 }
 // appel api en fonction de l'id article selectionné
 function callPriceAndId() {
-  articleArray.forEach((product) => {
+  articleArray
+  .sort((a, b) => a.articleId.localeCompare(b.articleId))
+  .forEach((product) => {
     fetch(`http://localhost:3000/api/products/${product.articleId}`)
       .then((response) => response.json())
       .then((data) => {
@@ -176,6 +178,7 @@ function displayTotalPrice() {
 // fonction enregistre les nouvelles quantitées quand EventListener 'click' execute la fonction updatePriceAndQuantity(item.articleId, inputQuantite.value))
 function updateProductLocalStorage(item) {
   const key = `${item.articleId}-${item.color}`;
+  delete item.price;
   localStorage.setItem(key, JSON.stringify(item));
 }
 // boutton supprimer
@@ -233,6 +236,9 @@ function submitForm(e) {
   e.preventDefault();
   if (localStorage.length === 0) {
     alert("S'il vous plaît choisissez un article");
+    return;
+  }
+  if (!validCity() ) { // || !emailValid() || addressInval() 
     return;
   }
   // if (ifFormInvalid()) return;
@@ -294,22 +300,27 @@ function getIdsFromLocalStorage() {
   return ids;
 }
 // vérifie le validitée de l'input city
-function isCityInvalid() {
+
+function validCity() {
+    const city = document.querySelector("#city");
+    const regex = /^[a-zA-Z ]+$/;
+    const errorCity = document.querySelector("#cityErrorMsg");
+    console.log('city', city.value)
+    let testCity = regex.test(city.value);
+      if (testCity) {
+        errorCity.textContent = '';
+        console.log('Valid')
+        return true;
+      } else {
+        errorCity.textContent = "Les caractères spéciaux et chiffres ne sont pas tolérés";
+        errorCity.style.color = "#fbbcbc"
+        return false;
+      }
+}
+
+function addCityValidator() {
   const city = document.querySelector("#city");
-  const errorCity = document.querySelector("#cityErrorMsg");
-  city.addEventListener('change', (e) => validCity(this))
-    function validCity(){
-      const regex = /^[a-zA-Z0-9 ]+$/;
-      let testCity = regex.test(city.value);
-        if(testCity) {
-          errorCity.textContent = 'Ville valide';
-          errorCity.style.color = 'green';
-        }else {
-          errorCity.textContent = "Les caractères spéciaux et chiffres ne sont pas tolérés";
-          errorCity.style.color = "#fbbcbc"
-        }
-  }
-  
+  city.addEventListener('change', (e) => validCity())
 }
 // vérifie le validitée de l'input address
 function isAdressInvalid() {
@@ -320,8 +331,7 @@ function isAdressInvalid() {
       const regex = /^[a-zA-Z0-9 ]+$/;
       let testAddress = regex.test(address.value);
         if(testAddress){
-          errorAddress.textContent = 'Adrresse valide';
-          errorAddress.style.color = 'green';
+          errorAddress.textContent = '';
         }else {
           errorAddress.textContent = "Les caractères spéciaux ne sont pas tolérés";
           errorAddress.style.color = '#fbbcbc';
@@ -337,8 +347,7 @@ function isLastNameInvalid() {
       const regex = /^[a-zA-Z-]+$/;
       let testLastName = regex.test(lastName.value);
         if(testLastName){
-          errorLastName.textContent = 'Format prénom valide';
-          errorLastName.style.color = 'green';
+          errorLastName.textContent = '';
         }else {
           errorLastName.textContent = "Veuillez écrire votre nom correctement";
         }
@@ -388,4 +397,5 @@ callPriceAndId();
 selectedSubmitForm();
 buildRequestBody();
 getIdsFromLocalStorage();
-isCityInvalid();
+
+addCityValidator();
