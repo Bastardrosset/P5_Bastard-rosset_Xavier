@@ -90,7 +90,7 @@ function saveCart(selectedColor,selectedQuantity){
     }
     let item = JSON.parse(localStorage.getItem(key))
     if (item) {
-        item.quantity++;
+        ++item.quantity;
         localStorage.setItem(key, JSON.stringify(item));
     } else {
         localStorage.setItem(key, JSON.stringify(data));

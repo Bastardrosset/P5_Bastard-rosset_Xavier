@@ -34,6 +34,7 @@ function callPriceAndId() {
       .then((data) => {
         product.price = data.price;
         contentArticle(product);
+
       });
   });
 }
@@ -207,9 +208,10 @@ function deleteDataLocalStorage(item) {
 
 // FORMULAIRE
 // selectionne le boutton commander du formulaire
-function selectedSubmitForm() {
+function selectedSubmitForm(e) {
   const orderButton = document.getElementById("order");
   orderButton.addEventListener("click", (e) => submitForm(e));
+  
 }
 // Gestion formulaire, conditions de validité && si valide renvoie les données
 function submitForm(e) {
@@ -218,7 +220,8 @@ function submitForm(e) {
     alert("S'il vous plaît choisissez un article");
     return;
   }
- 
+  if(isFirstNameValid(firstName) || isLastNameValid(lastName) || isAddressValid(address) || isCityValid(city) || isEmailValid(email));
+
   const body = buildRequestBody();
   fetch("http://localhost:3000/api/products/order", {
     method: "POST",
@@ -284,8 +287,10 @@ function isCityValid(){
         let cityTest = regex.test(city.value);
           if(cityTest){
             errorCity.textContent = '';
+            return true;
           }else {
             errorCity.textContent = 'Ville invalide, les chiffres et caractères spéciaux ne sont pas permis';
+            return false;
           }
       }
 }
@@ -302,8 +307,10 @@ function isAddressValid(){
           let addressTest = regex.test(address.value);
             if(addressTest){
               errorAddress.textContent = '';
+              return true;
             }else {
               errorAddress.textContent = 'Adresse invalide, les caractères spéciaux ne sont pas permis';
+              return false;
             }
         }
 }
@@ -320,8 +327,10 @@ function isLastNameValid(){
         let lastNameTest = regex.test(lastName.value);
           if(lastNameTest){
             errorLastName.textContent = '';
+            return true;
           }else {
             errorLastName.textContent = 'Nom invalide, les chiffres et caractères spéciaux ne sont pas permis';
+            return false;
           }
       }
 }
@@ -358,8 +367,10 @@ function isEmailValid() {
         let emailTest = regex.test(email.value);
           if(emailTest){
             errorEmail.textContent = '';
+            return true;
           }else {
             errorEmail.textContent = 'Format email invalide';
+            return false;
           }
       }
 }
@@ -368,4 +379,10 @@ callPriceAndId();
 selectedSubmitForm();
 buildRequestBody();
 getIdsFromLocalStorage();
+isCityValid();
+isAddressValid();
+isLastNameValid();
+isFirstNameValid();
+isEmailValid();
+
 
