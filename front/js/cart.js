@@ -51,6 +51,7 @@ function contentArticle(item) {
   displayTotalQuantity(item);
   displayTotalPrice(item);
 }
+
 // bloc section du document
 function contentSection() {
   const section = document.getElementById("cart__items");
