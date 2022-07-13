@@ -1,20 +1,21 @@
 const articleArray = [];
 articleArray.forEach((item) => contentArticle(item));
-// let price = null;
 // console.log(articleArray);
+
 function localStorageArticle() {
   const nmbArticle = localStorage.length;
   // console.log("vous avez ajouter : ", nmbArticle);
   for (let i = 0; i < nmbArticle; i++) {
     const item = localStorage.getItem(localStorage.key(i));
     // console.log("objet a la position ", i, `est l'`, article)
-    if (isJson(item)) {
-      const articleObjet = JSON.parse(item);
-      articleArray.push(articleObjet);
-    }
-    // console.log(articleArray);
+      if (isJson(item)) {
+        const articleObjet = JSON.parse(item);
+        articleArray.push(articleObjet);
+      }
+      // console.log(articleArray);
   }
 }
+
 // verifie si les données sont convertis en JS
 function isJson(str) {
   try {
@@ -24,6 +25,7 @@ function isJson(str) {
   }
   return true;
 }
+
 // appel api en fonction de l'id article selectionné
 function callPriceAndId() {
   articleArray
@@ -38,6 +40,7 @@ function callPriceAndId() {
       });
   });
 }
+
 // bloc article qui contient l'ensemble des items du produit dans le panier
 function contentArticle(item) {
   const section = contentSection();
@@ -57,6 +60,7 @@ function contentSection() {
   const section = document.getElementById("cart__items");
   return section;
 }
+
 // Bloc article du document
 function buildArticle(item) {
   const blocArticle = document.createElement("article");
@@ -66,6 +70,7 @@ function buildArticle(item) {
   // console.log("blocArticle",blocArticle);
   return blocArticle;
 }
+
 // image du produit
 function buildImage(item) {
   const divImage = document.createElement("div");
@@ -76,6 +81,7 @@ function buildImage(item) {
   divImage.appendChild(image);
   return divImage;
 }
+
 // description du produit, regroupe fonctions buildItemDescription && buildBlocQuantity
 function buildDescription(item) {
   const blocDivDescription = document.createElement("div");
@@ -86,6 +92,7 @@ function buildDescription(item) {
   blocDivDescription.appendChild(blocSetting);
   return blocDivDescription;
 }
+
 //descriptif nom, couleur et prix de l'article
 function buildItemDescription(item) {
   const divDescription = document.createElement("div");
@@ -101,6 +108,7 @@ function buildItemDescription(item) {
   divDescription.appendChild(price);
   return divDescription;
 }
+
 // quantite d'article & input
 function buildBlocQuantity(item) {
   const blocSetting = document.createElement("div");
@@ -119,6 +127,9 @@ function buildBlocQuantity(item) {
   inputQuantite.addEventListener("input", () =>
     updatePriceAndQuantity(item.articleId, inputQuantite.value, item.color)
   );
+  inputQuantite.addEventListener("click", () => 
+  location.reload()
+  );
   p.textContent = `Qté : `;
   blocSetting.appendChild(divQuantity);
   divQuantity.appendChild(p);
@@ -126,6 +137,7 @@ function buildBlocQuantity(item) {
   blocSetting.appendChild(divdeleteItem);
   return blocSetting;
 }
+
 // function changement on click quantité dans le panier
 function updatePriceAndQuantity(articleId, newQuantiteValue, color) {
   //retourne une nouvelle quantité en passant par array localStorage
@@ -138,6 +150,7 @@ function updatePriceAndQuantity(articleId, newQuantiteValue, color) {
   displayTotalPrice();
   updateProductLocalStorage(newItem);
 }
+
 // fonction de calcul du nombre d'article total dans le panier
 function displayTotalQuantity() {
   const totalQuantity = document.getElementById("totalQuantity");
@@ -147,6 +160,7 @@ function displayTotalQuantity() {
   ); // methode reduce() renvoie la valeur cumulé dans array localStorage
   totalQuantity.textContent = totalItemQuantity;
 }
+
 // fonction de calcul de prix total dans le panier
 function displayTotalPrice() {
   const totalPrice = document.getElementById("totalPrice");
@@ -159,12 +173,15 @@ function displayTotalPrice() {
   totalPrice.textContent = total;
   // console.log(total);
 }
+
 // fonction enregistre les nouvelles quantitées quand EventListener 'click' execute la fonction updatePriceAndQuantity(item.articleId, inputQuantite.value))
 function updateProductLocalStorage(item) {
   const key = `${item.articleId}-${item.color}`;
   delete item.price;
+
   localStorage.setItem(key, JSON.stringify(item));
 }
+
 // boutton supprimer
 function buildDeleteItem(item) {
   const divdeleteItem = document.createElement("div");
@@ -176,6 +193,7 @@ function buildDeleteItem(item) {
   divdeleteItem.addEventListener("click", () => deleteItem(item));
   return divdeleteItem;
 }
+
 // cible l'article à supprimer dans localStorage
 function deleteItem(item) {
   // console.log('item to delete',item);
@@ -191,6 +209,7 @@ function deleteItem(item) {
   deleteDataLocalStorage(item);
   deleteArticleFromPage(item);
 }
+
 // fonction supprimer sur la page
 function deleteArticleFromPage(item) {
   const articleToDelete = document.querySelector(
@@ -199,6 +218,7 @@ function deleteArticleFromPage(item) {
   // console.log('deleting article', articleToDelete);
   articleToDelete.remove();
 }
+
 // fonction supprimer dans localStorage
 function deleteDataLocalStorage(item) {
   const key = `${item.articleId}-${item.color}`;
@@ -214,6 +234,7 @@ function selectedSubmitForm(e) {
   orderButton.addEventListener("click", (e) => submitForm(e));
   
 }
+
 // Gestion formulaire, conditions de validité && si valide renvoie les données
 function submitForm(e) {
   e.preventDefault();
@@ -241,6 +262,7 @@ function submitForm(e) {
     .catch((error) => console.error(error));
   // console.log(form.elements);
 }
+
 // constructeur clé body, information enregistrés par le client
 function buildRequestBody() {
   const form = document.querySelector(".cart__order__form");
@@ -262,6 +284,7 @@ function buildRequestBody() {
   // console.log(body);
   return body;
 }
+
 // constructeur clé products, ID article séléctionné par le client
 function getIdsFromLocalStorage() {
   const numberOfProduct = localStorage.length;
@@ -275,15 +298,16 @@ function getIdsFromLocalStorage() {
   }
   return ids;
 }
+
 // vérifie le validitée de l'input city
-function isCityValid(){
+function isCityValid() {
   const city = document.querySelector("#city");
   const errorCity = document.querySelector("#cityErrorMsg");
 
   city.addEventListener('change', function() {
     forCityValid(this)
   });
-      function forCityValid(){
+      function forCityValid() {// verifie input city
         const regex = /^[a-zA-Z]+$/;
         let cityTest = regex.test(city.value);
           if(cityTest){
@@ -295,15 +319,16 @@ function isCityValid(){
           }
       }
 }
+
 // vérifie le validitée de l'input address
-function isAddressValid(){
+function isAddressValid() {
   const address = document.querySelector("#address");
   const errorAddress = document.querySelector("#addressErrorMsg");
 
   address.addEventListener('change', function() {
       forAddressValid(this)
   });
-        function forAddressValid(){
+        function forAddressValid() {// verifie input address
           const regex = /^[a-zA-Z0-9 ]+$/;
           let addressTest = regex.test(address.value);
             if(addressTest){
@@ -315,15 +340,16 @@ function isAddressValid(){
             }
         }
 }
+
 // vérifie le validitée de l'input lastName
-function isLastNameValid(){
+function isLastNameValid() {
   const lastName = document.querySelector("#lastName");
   const errorLastName = document.querySelector("#lastNameErrorMsg");
 
   lastName.addEventListener('change', function() {
     forLastNameValid(this)
   });
-      function forLastNameValid(){
+      function forLastNameValid() {// verifie input firstName
         const regex = /^[a-zA-Z-]+$/;
         let lastNameTest = regex.test(lastName.value);
           if(lastNameTest){
@@ -335,6 +361,7 @@ function isLastNameValid(){
           }
       }
 }
+
 // Vérifie la validitée de l'input lastName
 function isFirstNameValid() {
   const firstName = document.querySelector("#firstName");
@@ -343,7 +370,7 @@ function isFirstNameValid() {
   firstName.addEventListener('change', function() {
     forFirstNameValid(this)
   });
-      function forFirstNameValid(){
+      function forFirstNameValid() {// verifie input lastName
         const regex = /^[a-zA-Z]+$/;
         let firstNameTest = regex.test(firstName.value);
           if(firstNameTest){
@@ -355,6 +382,7 @@ function isFirstNameValid() {
           }
       }
 }
+
 // vérifie le validitée de l'input email
 function isEmailValid() {
   const email = document.querySelector("#email");
@@ -363,7 +391,7 @@ function isEmailValid() {
   email.addEventListener('change', function(){
       forEmailValid(this)
   });
-      function forEmailValid(){
+      function forEmailValid() {// verifie input email
         const regex = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
         let emailTest = regex.test(email.value);
           if(emailTest){
@@ -375,6 +403,9 @@ function isEmailValid() {
           }
       }
 }
+
+
+
 localStorageArticle();
 callPriceAndId();
 selectedSubmitForm();
