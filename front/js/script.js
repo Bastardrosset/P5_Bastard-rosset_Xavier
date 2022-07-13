@@ -8,7 +8,7 @@ fetch("http://localhost:3000/api/products")// appel a l'API
     )
 
 // gere l'assemblage de la sémantique de la page
-function addProducts(data){
+function addProducts(data) { 
     data.forEach((kanap) =>{
     const {_id, imageUrl, altTxt, name, description} = kanap// recupere les string de l'api
     const image = buildImage(imageUrl, altTxt);// appel la fonction buildImage
@@ -25,14 +25,14 @@ function addProducts(data){
 }
 
 // creation du lien vers l'article
-function makeAnchor(id){
+function makeAnchor(id) {
     const anchor = document.createElement('a');
     anchor.href = `./product.html?id=${id}`;// redirige vers la page de l'article
     return anchor;
 }
 
 // selection de l'élément auquel on ajoute le l'élément lien et l'élément article
-function linkItems(anchor, article){
+function linkItems(anchor, article) {
     const items = document.getElementById("items");
     if (items != null){// si items est trouvé
     items.appendChild(anchor);// on lui ajoute le lien anchor
@@ -41,7 +41,7 @@ function linkItems(anchor, article){
 }
 
 // creation du bloc image
-function buildImage(imageUrl, altTxt){
+function buildImage(imageUrl, altTxt) {
     const image = document.createElement('img');
     image.src = imageUrl;
     image.alt = altTxt;
@@ -50,7 +50,7 @@ function buildImage(imageUrl, altTxt){
 }
 
 // creation du titre de l'article
-function buildH3(name){
+function buildH3(name) {
     const titleArticle = document.createElement('h3');
     titleArticle.textContent = name;
     titleArticle.classList.add('productName');
@@ -59,7 +59,7 @@ function buildH3(name){
 }
 
 // creation du descriptif de l'article
-function txtArticle(description){
+function txtArticle(description) {
     const textArticle = document.createElement('p');
     textArticle.textContent = description;
     textArticle.classList.add('productDescription');
