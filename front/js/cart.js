@@ -1,9 +1,8 @@
 const articleArray = [];
-articleArray
-.sort((a, b) => a.articleId.localeCompare(b.articleId))
-.forEach((item) =>  contentArticle(item));
+articleArray.forEach((item) =>  contentArticle(item));
 
 // console.log(articleArray);
+
 
 function localStorageArticle() {
   const nmbArticle = localStorage.length;
@@ -31,20 +30,23 @@ function isJson(str) {
 
 // appel api en fonction de l'id article selectionné
 function callPriceAndId() {
-  articleArray
-  .sort((a, b) => a.articleId.localeCompare(b.articleId))
-  .forEach((product) => {
+  articleArray.sort((a, z) => a.articleId.localeCompare(z.articleId));
+  articleArray.forEach((product) => {
     fetch(`http://localhost:3000/api/products/${product.articleId}`)
 
       .then((response) => response.json())
 
       .then((data) => {
-
         product.price = data.price;
         contentArticle(product);
-  console.log(articleArray);
+
+
       });
+
+      // contentArticle(product);
+
   });
+  console.log(articleArray);
 
 }
 
@@ -187,6 +189,7 @@ function updateProductLocalStorage(item) {
   delete item.price;
 
   localStorage.setItem(key, JSON.stringify(item));
+  articleArray.push(item)
 }
 
 // boutton supprimer
@@ -426,6 +429,7 @@ function isEmailValid() {
           }
       }
 }
+
 
 
 
