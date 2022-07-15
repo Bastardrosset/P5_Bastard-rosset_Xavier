@@ -1,5 +1,8 @@
 const articleArray = [];
-articleArray.forEach((item) => contentArticle(item));
+articleArray
+.sort((a, b) => a.articleId.localeCompare(b.articleId))
+.forEach((item) =>  contentArticle(item));
+
 // console.log(articleArray);
 
 function localStorageArticle() {
@@ -29,16 +32,20 @@ function isJson(str) {
 // appel api en fonction de l'id article selectionné
 function callPriceAndId() {
   articleArray
-  .sort((a, b) => a.name.localeCompare(b.name))
+  .sort((a, b) => a.articleId.localeCompare(b.articleId))
   .forEach((product) => {
     fetch(`http://localhost:3000/api/products/${product.articleId}`)
+
       .then((response) => response.json())
+
       .then((data) => {
+
         product.price = data.price;
         contentArticle(product);
-
+  console.log(articleArray);
       });
   });
+
 }
 
 // bloc article qui contient l'ensemble des items du produit dans le panier
@@ -232,6 +239,7 @@ function deleteDataLocalStorage(item) {
 function selectedSubmitForm(e) {
   const orderButton = document.getElementById("order");
   orderButton.addEventListener("click", (e) => submitForm(e));
+    
   
 }
 
@@ -242,8 +250,8 @@ function submitForm(e) {
     alert("S'il vous plaît choisissez un article");
     return;
   }
-  if(isFirstNameValid(firstName) || isLastNameValid(lastName) || isAddressValid(address) || isCityValid(city) || isEmailValid(email));
-
+  if(isFirstNameValid(firstName) && isLastNameValid(lastName) && isAddressValid(address) && isCityValid(city) && isEmailValid(email)) return;
+  
   const body = buildRequestBody();
   fetch("http://localhost:3000/api/products/order", {
     method: "POST",
@@ -261,6 +269,7 @@ function submitForm(e) {
     })
     .catch((error) => console.error(error));
   // console.log(form.elements);
+
 }
 
 // constructeur clé body, information enregistrés par le client
@@ -309,8 +318,11 @@ function isCityValid() {
   });
       function forCityValid() {// verifie input city
         const regex = /^[a-zA-Z]+$/;
+        valid = true;
         let cityTest = regex.test(city.value);
-          if(cityTest){
+        // console.log(cityTest);
+
+          if(cityTest === valid){
             errorCity.textContent = '';
             return true;
           }else {
@@ -330,8 +342,11 @@ function isAddressValid() {
   });
         function forAddressValid() {// verifie input address
           const regex = /^[a-zA-Z0-9 ]+$/;
+          valid = true;
           let addressTest = regex.test(address.value);
-            if(addressTest){
+          // console.log(addressTest);
+
+            if(addressTest === valid){
               errorAddress.textContent = '';
               return true;
             }else {
@@ -351,8 +366,11 @@ function isLastNameValid() {
   });
       function forLastNameValid() {// verifie input firstName
         const regex = /^[a-zA-Z-]+$/;
+        valid = true;
         let lastNameTest = regex.test(lastName.value);
-          if(lastNameTest){
+        // console.log(lastNameTest);
+
+          if(lastNameTest === valid){
             errorLastName.textContent = '';
             return true;
           }else {
@@ -372,8 +390,10 @@ function isFirstNameValid() {
   });
       function forFirstNameValid() {// verifie input lastName
         const regex = /^[a-zA-Z]+$/;
+        valid = true;
         let firstNameTest = regex.test(firstName.value);
-          if(firstNameTest){
+        // console.log(firstNameTest);
+          if(firstNameTest === valid){
             errorFirstName.textContent = '';
             return true;
           }else {
@@ -393,8 +413,11 @@ function isEmailValid() {
   });
       function forEmailValid() {// verifie input email
         const regex = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        valid = true;
         let emailTest = regex.test(email.value);
-          if(emailTest){
+        // console.log(emailTest);
+
+          if(emailTest === valid){
             errorEmail.textContent = '';
             return true;
           }else {
