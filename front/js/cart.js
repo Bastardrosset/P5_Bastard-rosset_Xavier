@@ -1,7 +1,7 @@
 const articleArray = [];
 articleArray.forEach((item) =>  contentArticle(item));
 
-// console.log(articleArray);
+console.log(articleArray);
 
 
 function localStorageArticle() {
@@ -38,18 +38,23 @@ function callPriceAndId() {
 
       .then((data) => {
         product.price = data.price;
-        contentArticle(product);
-
+        callPrice(product)
 
       });
 
-      // contentArticle(product);
+      contentArticle(product);
 
   });
-  console.log(articleArray);
+  // console.log(articleArray);
 
 }
 
+// Appel du prix en fonction de l'ID
+function callPrice(product){
+  price = product.price;
+  articleArray.push(price)
+  console.log("my price as",price)
+}
 // bloc article qui contient l'ensemble des items du produit dans le panier
 function contentArticle(item) {
   const section = contentSection();
@@ -63,7 +68,6 @@ function contentArticle(item) {
   displayTotalQuantity(item);
   displayTotalPrice(item);
 }
-
 // bloc section du document
 function contentSection() {
   const section = document.getElementById("cart__items");
@@ -253,7 +257,10 @@ function submitForm(e) {
     alert("S'il vous plaît choisissez un article");
     return;
   }
-  if(isFirstNameValid(firstName) && isLastNameValid(lastName) && isAddressValid(address) && isCityValid(city) && isEmailValid(email)) return;
+  if(!validFirstName(firstName) || !validLastName(lastName) || !validAddress(address) || !validCity(city) || !validEmail(email)){
+    alert("Votre formulaire est mal completé");
+    return
+  };
   
   const body = buildRequestBody();
   fetch("http://localhost:3000/api/products/order", {
@@ -311,125 +318,133 @@ function getIdsFromLocalStorage() {
   return ids;
 }
 
-// vérifie le validitée de l'input city
+// vérifie la validitée de l'input city
 function isCityValid() {
   const city = document.querySelector("#city");
-  const errorCity = document.querySelector("#cityErrorMsg");
 
   city.addEventListener('change', function() {
-    forCityValid(this)
+    validCity(this)
   });
-      function forCityValid() {// verifie input city
-        const regex = /^[a-zA-Z]+$/;
-        valid = true;
-        let cityTest = regex.test(city.value);
-        // console.log(cityTest);
+      
+}
+const validCity = function() {// verifie expression régulière input city
+  const city = document.querySelector("#city");
+  const errorCity = document.querySelector("#cityErrorMsg");
+  const regex = /^[a-zA-Z]+$/;
+  valid = true;
+  let cityTest = regex.test(city.value);
+  // console.log(cityTest);
 
-          if(cityTest === valid){
-            errorCity.textContent = '';
-            return true;
-          }else {
-            errorCity.textContent = 'Ville invalide, les chiffres et caractères spéciaux ne sont pas permis';
-            return false;
-          }
-      }
+    if(cityTest === valid){
+      errorCity.textContent = '';
+      return true;
+    }else {
+      errorCity.textContent = 'Ville invalide, les chiffres et caractères spéciaux ne sont pas permis';
+      return false;
+    }
 }
 
-// vérifie le validitée de l'input address
+// vérifie la validitée de l'input address
 function isAddressValid() {
   const address = document.querySelector("#address");
-  const errorAddress = document.querySelector("#addressErrorMsg");
 
   address.addEventListener('change', function() {
-      forAddressValid(this)
+      validAddress(this)
   });
-        function forAddressValid() {// verifie input address
-          const regex = /^[a-zA-Z0-9 ]+$/;
-          valid = true;
-          let addressTest = regex.test(address.value);
-          // console.log(addressTest);
+        
+}
+const validAddress = function() {// verifie expression régulière input address
+  const address = document.querySelector("#address");
+  const errorAddress = document.querySelector("#addressErrorMsg");
+  const regex = /^[a-zA-Z0-9 ]+$/;
+  valid = true;
+  let addressTest = regex.test(address.value);
+  // console.log(addressTest);
 
-            if(addressTest === valid){
-              errorAddress.textContent = '';
-              return true;
-            }else {
-              errorAddress.textContent = 'Adresse invalide, les caractères spéciaux ne sont pas permis';
-              return false;
-            }
-        }
+    if(addressTest === valid){
+      errorAddress.textContent = '';
+      return true;
+    }else {
+      errorAddress.textContent = 'Adresse invalide, les caractères spéciaux ne sont pas permis';
+      return false;
+    }
 }
 
-// vérifie le validitée de l'input lastName
+// vérifie la validitée de l'input lastName
 function isLastNameValid() {
   const lastName = document.querySelector("#lastName");
-  const errorLastName = document.querySelector("#lastNameErrorMsg");
 
   lastName.addEventListener('change', function() {
-    forLastNameValid(this)
+    validLastName(this)
   });
-      function forLastNameValid() {// verifie input firstName
-        const regex = /^[a-zA-Z-]+$/;
-        valid = true;
-        let lastNameTest = regex.test(lastName.value);
-        // console.log(lastNameTest);
+}
+const validLastName = function() {// verifie expression régulière input firstName
+  const lastName = document.querySelector("#lastName");
+  const errorLastName = document.querySelector("#lastNameErrorMsg");
+  const regex = /^[a-zA-Z-]+$/;
+  valid = true;
+  let lastNameTest = regex.test(lastName.value);
+  let lastNameLengthTest = lastName.value.length >=2 && lastName.value.length <=20
+  // console.log(lastNameTest);
 
-          if(lastNameTest === valid){
-            errorLastName.textContent = '';
-            return true;
-          }else {
-            errorLastName.textContent = 'Nom invalide, les chiffres et caractères spéciaux ne sont pas permis';
-            return false;
-          }
-      }
+    if(lastNameTest, lastNameLengthTest === valid){
+      errorLastName.textContent = '';
+      return true;
+    }else {
+      errorLastName.textContent = 'Nom invalide, les chiffres et caractères spéciaux ne sont pas permis et le format entre 2 et 20 caractères';
+      return false;
+    }
 }
 
 // Vérifie la validitée de l'input lastName
 function isFirstNameValid() {
   const firstName = document.querySelector("#firstName");
-  const errorFirstName = document.querySelector("#firstNameErrorMsg");
   
   firstName.addEventListener('change', function() {
-    forFirstNameValid(this)
+    validFirstName(this)
   });
-      function forFirstNameValid() {// verifie input lastName
-        const regex = /^[a-zA-Z]+$/;
-        valid = true;
-        let firstNameTest = regex.test(firstName.value);
-        // console.log(firstNameTest);
-          if(firstNameTest === valid){
-            errorFirstName.textContent = '';
-            return true;
-          }else {
-            errorFirstName.textContent = 'Format prénom invalide, les chiffres et caractères spéciaux ne sont pas permis';
-            return false;
-          }
-      }
+}
+const validFirstName = function() {// verifie expression régulière input lastName
+  const firstName = document.querySelector("#firstName");
+  const errorFirstName = document.querySelector("#firstNameErrorMsg");
+  const regex = /^[a-zA-Z]+$/;
+  valid = true;
+  let firstNameTest = regex.test(firstName.value);
+  let fisrtNameLengthTest = firstName.value.length >=3 && firstName.value.length <=20
+  // console.log(firstNameTest);
+    if(firstNameTest, fisrtNameLengthTest === valid){
+      errorFirstName.textContent = '';
+      return true;
+    }else {
+      errorFirstName.textContent = 'Format prénom invalide, les chiffres et caractères spéciaux ne sont pas permis et le format entre 3 et 20 caractères';
+      return false;
+    }
 }
 
-// vérifie le validitée de l'input email
+// vérifie la validitée de l'input email
 function isEmailValid() {
   const email = document.querySelector("#email");
-  const errorEmail = document.querySelector("#emailErrorMsg");
 
   email.addEventListener('change', function(){
-      forEmailValid(this)
+    validEmail(this)
   });
-      function forEmailValid() {// verifie input email
-        const regex = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
-        valid = true;
-        let emailTest = regex.test(email.value);
-        // console.log(emailTest);
-
-          if(emailTest === valid){
-            errorEmail.textContent = '';
-            return true;
-          }else {
-            errorEmail.textContent = 'Format email invalide';
-            return false;
-          }
-      }
 }
+const validEmail = function() {// verifie input email
+  const email = document.querySelector("#email");
+  const errorEmail = document.querySelector("#emailErrorMsg");
+  const regex = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+  valid = true;
+  let emailTest = regex.test(email.value);
+  // console.log(emailTest);
 
+    if(emailTest === valid){
+      errorEmail.textContent = '';
+      return true;
+    }else {
+      errorEmail.textContent = 'Format email invalide';
+      return false;
+    }
+}
 
 
 
