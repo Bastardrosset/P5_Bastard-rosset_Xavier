@@ -1,8 +1,7 @@
-const articleArray = [];
+let articleArray = [];
 articleArray.forEach((item) =>  contentArticle(item));
 
-// console.log(articleArray);
-
+// boucle sur le contenu du localStorage et envoie le contenu vers tableau ArticleArray
 function localStorageArticle() {
   const nmbArticle = localStorage.length;
   // console.log("vous avez ajouter : ", nmbArticle);
@@ -30,30 +29,25 @@ function isJson(str) {
 // appel api en fonction de l'id article selectionné
 function callPriceAndId() {
   articleArray.sort((a, z) => a.articleId.localeCompare(z.articleId));
-  articleArray.forEach((product) => {
+  let productFromAPI = [];
+
+  articleArray.forEach(async (product) => {
+    await new Promise(r => setTimeout(r, 500))
     fetch(`http://localhost:3000/api/products/${product.articleId}`)
-
       .then((response) => response.json())
-
       .then((data) => {
         product.price = data.price;
-        callPrice(product)
-
+        productFromAPI.push(product);
+        // callPrice(product)
+        contentArticle(product);
+        displayTotalQuantityAndPrice();
       });
 
-      contentArticle(product);
 
   });
   // console.log(articleArray);
-
 }
 
-// Appel du prix en fonction de l'ID
-function callPrice(product){
-  price = product.price;
-  articleArray.push(price)
-  console.log("my price as",price)
-}
 // bloc article qui contient l'ensemble des items du produit dans le panier
 function contentArticle(item) {
   const section = contentSection();
@@ -63,10 +57,10 @@ function contentArticle(item) {
   section.appendChild(blocArticle);
   blocArticle.appendChild(divImage);
   blocArticle.appendChild(blocDivDescription);
+
   contentSection();
-  displayTotalQuantity(item);
-  displayTotalPrice(item);
 }
+
 // bloc section du document
 function contentSection() {
   const section = document.getElementById("cart__items");
@@ -136,13 +130,13 @@ function buildBlocQuantity(item) {
   inputQuantite.min = "1";
   inputQuantite.max = "100";
   inputQuantite.value = item.quantity;
-  inputQuantite.addEventListener("input", () =>
-    updatePriceAndQuantity(item.articleId, inputQuantite.value, item.color)
-  );
-  inputQuantite.addEventListener("click", () => 
-  location.reload()
-  );
   p.textContent = `Qté : `;
+
+  inputQuantite.addEventListener("change", () => {
+    // console.log('Input value change', inputQuantite.value);
+    updatePriceAndQuantity(item.articleId, inputQuantite.value, item.color);
+  });
+  
   blocSetting.appendChild(divQuantity);
   divQuantity.appendChild(p);
   divQuantity.appendChild(inputQuantite);
@@ -152,47 +146,44 @@ function buildBlocQuantity(item) {
 
 // function changement on click quantité dans le panier
 function updatePriceAndQuantity(articleId, newQuantiteValue, color) {
+  
   //retourne une nouvelle quantité en passant par array localStorage
   const newItem = articleArray.find(
     (item) => item.articleId === articleId && item.color === color
   ); // methode find() renvoie la valeur du premier élément
   newItem.quantity = Number(newQuantiteValue);
-//   console.log("newTotalQuantity", newItem);
-  displayTotalQuantity();
-  displayTotalPrice();
+
   updateProductLocalStorage(newItem);
+  displayTotalQuantityAndPrice();
 }
 
 // fonction de calcul du nombre d'article total dans le panier
-function displayTotalQuantity() {
-  const totalQuantity = document.getElementById("totalQuantity");
-  const totalItemQuantity = articleArray.reduce(
-    (totalItemQuantity, item) => totalItemQuantity + item.quantity,
-    0
-  ); // methode reduce() renvoie la valeur cumulé dans array localStorage
-  totalQuantity.textContent = totalItemQuantity;
-}
-
-// fonction de calcul de prix total dans le panier
-function displayTotalPrice() {
-  const totalPrice = document.getElementById("totalPrice");
-  let total = 0;
-  articleArray.forEach((item) => {
-    const totalItem = item.price * item.quantity;
-    total += totalItem;
+function displayTotalQuantityAndPrice() {
+  const totalQuantityEl = document.getElementById("totalQuantity");
+  const totalPriceEl = document.getElementById("totalPrice");
+  let totalQuantity = 0;
+  let totalPrice = 0;
+  articleArray.forEach(article => {
+    // console.log('article', article)
+    totalQuantity += article.quantity;
+    totalPrice += article.quantity * article.price;
   });
-  // const total = articleArray.reduce((total, item) => total = item.price * item.quantity, 0);
-  totalPrice.textContent = total;
-  // console.log(total);
+  // console.log('Mise à jour de la qtty', totalPrice)
+  totalQuantityEl.textContent = totalQuantity;
+  totalPriceEl.textContent = totalPrice;
 }
 
-// fonction enregistre les nouvelles quantitées quand EventListener 'click' execute la fonction updatePriceAndQuantity(item.articleId, inputQuantite.value))
+// 
 function updateProductLocalStorage(item) {
   const key = `${item.articleId}-${item.color}`;
-  delete item.price;
 
-  localStorage.setItem(key, JSON.stringify(item));
-  articleArray.push(item)
+  articleArray = articleArray
+  .filter(el => el.articleId != item.articleId && el.color != item.color);
+  articleArray.push(item);
+  let copy = Object.assign({}, item) 
+  delete copy.price;
+  localStorage.setItem(key, JSON.stringify(copy));
+
 }
 
 // boutton supprimer
@@ -209,16 +200,14 @@ function buildDeleteItem(item) {
 
 // cible l'article à supprimer dans localStorage
 function deleteItem(item) {
-  // console.log('item to delete',item);
+
   const itemToDelete = articleArray.find(
     (selected) =>
       selected.articleId === item.articleId && selected.color === item.color
   );
-  //  console.log('item to delete',itemToDelete);
   articleArray.splice(itemToDelete, 1);
-  //  console.log(articleArray);
-  displayTotalQuantity();
-  displayTotalPrice();
+
+  displayTotalQuantityAndPrice();
   deleteDataLocalStorage(item);
   deleteArticleFromPage(item);
 }
@@ -228,19 +217,20 @@ function deleteArticleFromPage(item) {
   const articleToDelete = document.querySelector(
     `[data-id="${item.articleId}"][data-color="${item.color}"]`
   );
-  // console.log('deleting article', articleToDelete);
+  
   articleToDelete.remove();
 }
 
 // fonction supprimer dans localStorage
 function deleteDataLocalStorage(item) {
   const key = `${item.articleId}-${item.color}`;
-  // console.log('on retire cette key',key);
+  
   localStorage.removeItem(key);
 }
 
 
-// FORMULAIRE
+//************ */ FORMULAIRE /* ************/
+
 // selectionne le boutton commander du formulaire
 function selectedSubmitForm(e) {
   const orderButton = document.getElementById("order");
@@ -256,7 +246,7 @@ function submitForm(e) {
     return;
   }
   if(!validFirstName(firstName) || !validLastName(lastName) || !validAddress(address) || !validCity(city) || !validEmail(email)){
-    alert("Votre formulaire est mal completé");
+    alert("Votre formulaire est mal completé !");
     return
   };
   
@@ -308,140 +298,129 @@ function getIdsFromLocalStorage() {
   const ids = [];
   for (let i = 0; i < numberOfProduct; i++) {
     const key = localStorage.key(i);
-    // console.log('key as', key);
     const id = key.split("-")[0];
     ids.push(id);
-    // console.log('ids as', ids);
   }
   return ids;
 }
 
 // vérifie la validitée de l'input city
 function isCityValid() {
-  const city = document.querySelector("#city");
+  const cityEl = document.querySelector("#city");
 
-  city.addEventListener('change', function() {
+  cityEl.addEventListener('change', function() {
     validCity(this)
   });
       
 }
 const validCity = () => {// verifie expression régulière input city
-  const city = document.querySelector("#city");
-  const comment = city.nextElementSibling;
+  const cityEl = document.querySelector("#city");
+  const comment = cityEl.nextElementSibling;
   const regexCity = new RegExp(/^[a-zA-Z]+$/);
-  valid = true;
-  let cityTest = regexCity.test(city.value);
-  // let cityLengthTest = city.value.length <40;
-  // console.log(cityTest);
+  let cityTest = regexCity.test(cityEl.value);
 
-    if(cityTest === valid){
+    if(cityTest){
       comment.textContent = '';
       return true;
     }else {
-      comment.textContent = 'Ville invalide, les chiffres et caractères spéciaux ne sont pas permis';
-      console.log(city)
+      comment.textContent = 'Champ ville invalide, les chiffres et caractères spéciaux ne sont pas permis !';
       return false;
     }
 }
 
 // vérifie la validitée de l'input address
 function isAddressValid() {
-  const address = document.querySelector("#address");
+  const addressEl = document.querySelector("#address");
 
-  address.addEventListener('change', function() {
+  addressEl.addEventListener('change', function() {
       validAddress(this)
   });
         
 }
 const validAddress = function() {// verifie expression régulière input address
-  const address = document.querySelector("#address");
-  const comment = address.nextElementSibling;
+  const addressEl = document.querySelector("#address");
+  const comment = addressEl.nextElementSibling;
   const regexAddress = new RegExp(/^[a-zA-Z0-9 ]+$/);
-  valid = true;
-  let addressTest = regexAddress.test(address.value);
-  // console.log(addressTest);
+  let addressTest = regexAddress.test(addressEl.value);
 
-    if(addressTest === valid){
+    if(addressTest){
       comment.textContent = '';
       return true;
     }else {
-      comment.textContent = 'Adresse invalide, les caractères spéciaux ne sont pas permis';
+      comment.textContent = 'Champ adresse invalide, les caractères spéciaux ne sont pas permis !';
       return false;
     }
 }
 
 // vérifie la validitée de l'input lastName
 function isLastNameValid() {
-  const lastName = document.querySelector("#lastName");
+  const lastNameEl = document.querySelector("#lastName");
 
-  lastName.addEventListener('change', function() {
+  lastNameEl.addEventListener('change', function() {
     validLastName(this)
   });
 }
 const validLastName = function() {// verifie expression régulière input firstName
-  const lastName = document.querySelector("#lastName");
-  const comment = lastName.nextElementSibling;
+  const lastNameEl = document.querySelector("#lastName");
+  const comment = lastNameEl.nextElementSibling;
   const regexLastName = new RegExp(/^[a-zA-Z-]+$/);
   valid = true;
-  let lastNameTest = regexLastName.test(lastName.value);
+  let lastNameTest = regexLastName.test(lastNameEl.value);
   // console.log(lastNameTest);
 
     if(lastNameTest === valid){
       comment.textContent = '';
       return true;
     }else {
-      comment.textContent = 'Nom invalide, les chiffres et caractères spéciaux ne sont pas permis';
+      comment.textContent = 'Champ nom invalide, les chiffres et caractères spéciaux ne sont pas permis !';
       return false;
     }
 }
 
 // Vérifie la validitée de l'input FirstName
 function isFirstNameValid() {
-  const firstName = document.querySelector("#firstName");
+  const firstNameEl = document.querySelector("#firstName");
   
-  firstName.addEventListener('change', function() {
+  firstNameEl.addEventListener('change', function() {
     validFirstName(this)
-    console.log(firstName)
   });
 }
 const validFirstName = function() {// verifie expression régulière input lastName
-  const firstName = document.querySelector("#firstName");
-  const comment = firstName.nextElementSibling;
+  const firstNameEl = document.querySelector("#firstName");
+  const comment = firstNameEl.nextElementSibling;
   const regexFirstName = new RegExp(/^[a-zA-Z]+$/);
-  valid = true;
-  let firstNameTest = regexFirstName.test(firstName.value);
+ 
+  let firstNameTest = regexFirstName.test(firstNameEl.value);
   
-  // console.log(firstNameTest);
-    if(firstNameTest === valid){
+    if(firstNameTest){
       comment.textContent = '';
       return true;
     }else {
-      comment.textContent = 'Format prénom invalide, les chiffres et caractères spéciaux ne sont pas permis';
+      comment.textContent = 'Champ prénom invalide, les chiffres et caractères spéciaux ne sont pas permis !';
       return false;
     }
 }
 
 // vérifie la validitée de l'input email
 function isEmailValid() {
-  const email = document.querySelector("#email");
+  const emailEl = document.querySelector("#email");
 
-  email.addEventListener('change', function(){
+  emailEl.addEventListener('change', function(){
     validEmail(this)
   });
 }
 const validEmail = function() {// verifie input email
-  const email = document.querySelector("#email");
-  const comment = email.nextElementSibling;
+  const emailEl = document.querySelector("#email");
+  const comment = emailEl.nextElementSibling;
   const regexEmail = new RegExp(/^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/);
-  valid = true;
-  let emailTest = regexEmail.test(email.value);
-  // console.log(emailTest);
-
-    if(emailTest === valid){
+  
+  let emailTest = regexEmail.test(emailEl.value);
+  
+    if(emailTest){
       comment.textContent = '';
       return true;
     }else {
-      comment.textContent = 'Format email invalide';
+      comment.textContent = 'Format email invalide !';
       return false;
     }
 }
