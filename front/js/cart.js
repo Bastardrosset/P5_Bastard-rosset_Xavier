@@ -1,4 +1,4 @@
-const articleArray = [];
+let articleArray = [];
 articleArray.forEach((item) => contentArticle(item));
 
 // console.log(articleArray);
@@ -43,6 +43,7 @@ function callPriceAndId() {
         productFromAPI.push(product);
         // callPrice(product)
         contentArticle(product);
+        displayTotalQuantityAndPrice();
       });
 
 
@@ -68,8 +69,6 @@ function contentArticle(item) {
   blocArticle.appendChild(divImage);
   blocArticle.appendChild(blocDivDescription);
   contentSection();
-  displayTotalQuantity(item);
-  displayTotalPrice(item);
 }
 // bloc section du document
 function contentSection() {
@@ -140,12 +139,13 @@ function buildBlocQuantity(item) {
   inputQuantite.min = "1";
   inputQuantite.max = "100";
   inputQuantite.value = item.quantity;
-  inputQuantite.addEventListener("input", () =>
-    updatePriceAndQuantity(item.articleId, inputQuantite.value, item.color)
-  );
-  inputQuantite.addEventListener("click", () =>
-    location.reload()
-  );
+  inputQuantite.addEventListener("change", () => {
+    console.log('Input value change', inputQuantite.value);
+    updatePriceAndQuantity(item.articleId, inputQuantite.value, item.color);
+  });
+  // inputQuantite.addEventListener("click", (event) =>
+  //   console.log('Click sur une input qtty', event);
+  // );
   p.textContent = `Qté : `;
   blocSetting.appendChild(divQuantity);
   divQuantity.appendChild(p);
@@ -156,47 +156,57 @@ function buildBlocQuantity(item) {
 
 // function changement on click quantité dans le panier
 function updatePriceAndQuantity(articleId, newQuantiteValue, color) {
+  console.log('Params', articleId, newQuantiteValue, color)
   //retourne une nouvelle quantité en passant par array localStorage
   const newItem = articleArray.find(
     (item) => item.articleId === articleId && item.color === color
   ); // methode find() renvoie la valeur du premier élément
   newItem.quantity = Number(newQuantiteValue);
   //   console.log("newTotalQuantity", newItem);
-  displayTotalQuantity();
-  displayTotalPrice();
+
   updateProductLocalStorage(newItem);
+  displayTotalQuantityAndPrice();
 }
 
 // fonction de calcul du nombre d'article total dans le panier
-function displayTotalQuantity() {
-  const totalQuantity = document.getElementById("totalQuantity");
-  const totalItemQuantity = articleArray.reduce(
-    (totalItemQuantity, item) => totalItemQuantity + item.quantity,
-    0
-  ); // methode reduce() renvoie la valeur cumulé dans array localStorage
-  totalQuantity.textContent = totalItemQuantity;
+function displayTotalQuantityAndPrice() {
+  const totalQuantityEl = document.getElementById("totalQuantity");
+  const totalPriceEl = document.getElementById("totalPrice");
+  let totalQuantity = 0;
+  let totalPrice = 0;
+  articleArray.forEach(article => {
+    console.log('article', article)
+    totalQuantity += article.quantity;
+    totalPrice += article.quantity * article.price;
+  });
+  console.log('Mise à jour de la qtty', totalPrice)
+  totalQuantityEl.textContent = totalQuantity;
+  totalPriceEl.textContent = totalPrice;
 }
 
 // fonction de calcul de prix total dans le panier
-function displayTotalPrice() {
-  const totalPrice = document.getElementById("totalPrice");
-  let total = 0;
-  articleArray.forEach((item) => {
-    const totalItem = item.price * item.quantity;
-    total += totalItem;
-  });
-  // const total = articleArray.reduce((total, item) => total = item.price * item.quantity, 0);
-  totalPrice.textContent = total;
-  // console.log(total);
-}
+// function displayTotalPrice() {
+//   const totalPrice = document.getElementById("totalPrice");
+//   let total = 0;
+//   articleArray.forEach((item) => {
+//     const totalItem = item.price * item.quantity;
+//     total += totalItem;
+//   });
+//   // const total = articleArray.reduce((total, item) => total = item.price * item.quantity, 0);
+//   totalPrice.textContent = total;
+//   // console.log(total);
+// }
 
 // fonction enregistre les nouvelles quantitées quand EventListener 'click' execute la fonction updatePriceAndQuantity(item.articleId, inputQuantite.value))
 function updateProductLocalStorage(item) {
   const key = `${item.articleId}-${item.color}`;
-  delete item.price;
+  articleArray = articleArray
+  .filter(el => el.articleId != item.articleId && el.color != item.color);
+  articleArray.push(item);
+  let copy = Object.assign({}, item) 
+  delete copy.price;
+  localStorage.setItem(key, JSON.stringify(copy));
 
-  localStorage.setItem(key, JSON.stringify(item));
-  articleArray.push(item)
 }
 
 // boutton supprimer
@@ -221,8 +231,7 @@ function deleteItem(item) {
   //  console.log('item to delete',itemToDelete);
   articleArray.splice(itemToDelete, 1);
   //  console.log(articleArray);
-  displayTotalQuantity();
-  displayTotalPrice();
+  displayTotalQuantityAndPrice();
   deleteDataLocalStorage(item);
   deleteArticleFromPage(item);
 }
