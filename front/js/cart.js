@@ -30,22 +30,20 @@ function isJson(str) {
 function callPriceAndId() {
   articleArray.sort((a, z) => a.articleId.localeCompare(z.articleId));
   let productFromAPI = [];
-
+// fonction boucle sur produit dans articleArray, trouve le prix grace a produit index et renvoie vers tableau productFromAPI pour filtrer et classer
   articleArray.forEach(async (product) => {
-    await new Promise(r => setTimeout(r, 500))
+    await new Promise(r => setTimeout(r, 200))
     fetch(`http://localhost:3000/api/products/${product.articleId}`)
       .then((response) => response.json())
       .then((data) => {
         product.price = data.price;
         productFromAPI.push(product);
-        // callPrice(product)
-        contentArticle(product);
+
         displayTotalQuantityAndPrice();
       });
-
+      contentArticle(product);
 
   });
-  // console.log(articleArray);
 }
 
 // bloc article qui contient l'ensemble des items du produit dans le panier
