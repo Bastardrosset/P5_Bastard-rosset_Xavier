@@ -1,6 +1,7 @@
 let articleArray = [];
 articleArray.forEach((item) =>  contentArticle(item));
-
+let productFromAPI = [];
+console.log('array as ', productFromAPI)
 // boucle sur le contenu du localStorage et envoie le contenu vers tableau ArticleArray
 function localStorageArticle() {
   const nmbArticle = localStorage.length;
@@ -29,19 +30,21 @@ function isJson(str) {
 // appel api en fonction de l'id article selectionné
 function callPriceAndId() {
   articleArray.sort((a, z) => a.articleId.localeCompare(z.articleId));
-  let productFromAPI = [];
 // fonction boucle sur produit dans articleArray, trouve le prix grace a produit index et renvoie vers tableau productFromAPI pour filtrer et classer
   articleArray.forEach(async (product) => {
-    await new Promise(r => setTimeout(r, 200))
+    await new Promise(r => setTimeout(r, 1000))
     fetch(`http://localhost:3000/api/products/${product.articleId}`)
       .then((response) => response.json())
       .then((data) => {
         product.price = data.price;
-        productFromAPI.push(product);
-
+        product.id = data._id
+        productFromAPI.push(data);
+console.log(productFromAPI)
+        buildArticle(product)
         displayTotalQuantityAndPrice();
+console.log('article n°' + product.id + 'a un prix de ' + product.price)
       });
-      contentArticle(product);
+        contentArticle(product);
 
   });
 }
@@ -50,11 +53,7 @@ function callPriceAndId() {
 function contentArticle(item) {
   const section = contentSection();
   const blocArticle = buildArticle(item);
-  const divImage = buildImage(item);
-  const blocDivDescription = buildDescription(item);
   section.appendChild(blocArticle);
-  blocArticle.appendChild(divImage);
-  blocArticle.appendChild(blocDivDescription);
 
   contentSection();
 }
@@ -66,51 +65,56 @@ function contentSection() {
 }
 
 // Bloc article du document
-function buildArticle(item) {
+function buildArticle(item, product) {
   const blocArticle = document.createElement("article");
   blocArticle.classList.add("cart__item");
   blocArticle.dataset.id = item.articleId;
   blocArticle.dataset.color = item.color;
-  // console.log("blocArticle",blocArticle);
-  return blocArticle;
-}
-
+  
 // image du produit
-function buildImage(item) {
   const divImage = document.createElement("div");
   const image = document.createElement("img");
   divImage.classList.add("cart__item__img");
   image.src = item.imageUrl;
   image.alt = item.altTxt;
   divImage.appendChild(image);
-  return divImage;
-}
+
+  blocArticle.appendChild(divImage);
 
 // description du produit, regroupe fonctions buildItemDescription && buildBlocQuantity
-function buildDescription(item) {
   const blocDivDescription = document.createElement("div");
-  const divDescription = buildItemDescription(item);
   const blocSetting = buildBlocQuantity(item);
   blocDivDescription.classList.add("cart__item__content");
-  blocDivDescription.appendChild(divDescription);
-  blocDivDescription.appendChild(blocSetting);
-  return blocDivDescription;
-}
+
+  blocArticle.appendChild(blocDivDescription);
 
 //descriptif nom, couleur et prix de l'article
-function buildItemDescription(item) {
   const divDescription = document.createElement("div");
   const title = document.createElement("h2");
   const colorChoice = document.createElement("p");
-  const price = document.createElement("p");
+  const priceEl = document.createElement("p");
+
   divDescription.classList.add("cart__item__content__description");
   title.textContent = item.name;
   colorChoice.textContent = item.color;
-  price.textContent = item.price + "€";
+  // priceEl.textContent = item.price;
+  const newPrice = productFromAPI.find(
+    (product) => product.id === item.articleId
+    
+  );
+console.log(item)
+  if(newPrice){
+    priceEl.textContent = price
+  }
+
+  blocDivDescription.appendChild(divDescription);
+  blocDivDescription.appendChild(blocSetting);
+
   divDescription.appendChild(title);
   divDescription.appendChild(colorChoice);
-  divDescription.appendChild(price);
-  return divDescription;
+  divDescription.appendChild(priceEl)
+
+  return blocArticle;
 }
 
 // quantite d'article & input
