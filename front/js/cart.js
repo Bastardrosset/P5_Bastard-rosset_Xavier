@@ -1,7 +1,5 @@
 let articleArray = [];
-// articleArray.forEach((item) =>  contentArticle(item));
-// let productsFromAPI = [];
-// console.log('array as ', productFromAPI)
+
 
 // boucle sur le contenu du localStorage et envoie le contenu vers tableau ArticleArray
 function localStorageArticle() {
@@ -30,7 +28,7 @@ function isJson(str) {
 
 // appel api en fonction de l'id article selectionné
 async function callPriceAndId() {
-  // fonction boucle sur produit dans articleArray, trouve le prix grace a produit index et renvoie vers tableau productFromAPI pour filtrer et classer
+  // fonction asnycrone boucle sur produit dans articleArray, trouve le prix grace a article index et retourne les valeurs du tableau articleArray
   for (let i = 0; i < articleArray.length; i++) {
     const response = await fetch(`http://localhost:3000/api/products/${articleArray[i].articleId}`);
     let productFromAPI = await response.json();
@@ -39,7 +37,7 @@ async function callPriceAndId() {
     articleArray[i].color = articleArray[i].color;
     articleArray[i].quantity = articleArray[i].quantity;
   }
-
+// classe les articles grace a .sort() et boucle pour injecter l'article avec contentArticle
   articleArray
     .sort((a, z) => a.articleId.localeCompare(z.articleId))
     .forEach(product => {
@@ -158,6 +156,7 @@ function displayTotalQuantityAndPrice() {
   const totalPriceEl = document.getElementById("totalPrice");
   let totalQuantity = 0;
   let totalPrice = 0;
+  console.log(articleArray)
   articleArray.forEach(article => {
     totalQuantity += article.quantity;
     totalPrice += article.quantity * article.price;
@@ -190,18 +189,15 @@ function buildDeleteItem(item) {
   return divdeleteItem;
 }
 
-// cible l'article à supprimer dans localStorage
+// cible l'article à supprimer dans localStorage fliter filtre tout les element sauf item
 function deleteItem(item) {
 
-  const itemToDelete = articleArray.find(
-    (selected) =>
-      selected.articleId === item.articleId && selected.color === item.color
-  );
-  articleArray.splice(itemToDelete, 1);
+  articleArray = articleArray.filter(el => el != item)
 
-  displayTotalQuantityAndPrice();
+
   deleteDataLocalStorage(item);
   deleteArticleFromPage(item);
+  displayTotalQuantityAndPrice();
 }
 
 // fonction supprimer sur la page
