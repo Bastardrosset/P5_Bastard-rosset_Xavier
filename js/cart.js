@@ -1,3 +1,4 @@
+// tableau qui reçoit les élément de LS 
 let articleArray = [];
 
 
@@ -12,7 +13,7 @@ function localStorageArticle() {
       const articleObjet = JSON.parse(item);
       articleArray.push(articleObjet);
     }
-    // console.log(articleArray);
+    console.log(articleArray);
   }
 }
 
@@ -140,7 +141,7 @@ function buildBlocQuantity(item) {
 function updatePriceAndQuantity(articleId, newQuantiteValue, color) {
 
   //retourne une nouvelle quantité en passant par array localStorage
-  console.log(articleArray, articleId, color)
+  // console.log(articleArray, articleId, color)
   const newItem = articleArray.find(
     (item) => item.articleId === articleId && item.color === color
   ); // methode find() renvoie la valeur du premier élément
@@ -156,7 +157,7 @@ function displayTotalQuantityAndPrice() {
   const totalPriceEl = document.getElementById("totalPrice");
   let totalQuantity = 0;
   let totalPrice = 0;
-  console.log(articleArray)
+  // console.log(articleArray)
   articleArray.forEach(article => {
     totalQuantity += article.quantity;
     totalPrice += article.quantity * article.price;
@@ -165,7 +166,7 @@ function displayTotalQuantityAndPrice() {
   totalPriceEl.textContent = totalPrice;
 }
 
-// 
+// permet d'éviter d'écraser un produit déja présent sur page panier
 function updateProductLocalStorage(item) {
   const key = `${item.articleId}-${item.color}`;
 
@@ -237,7 +238,7 @@ function submitForm(e) {
     alert("Votre formulaire est mal completé !");
     return
   };
-
+// constructeur du document form et redirige vers page order
   const body = buildRequestBody();
   fetch("http://localhost:3000/api/products/order", {
     method: "POST",
